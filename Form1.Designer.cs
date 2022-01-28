@@ -39,7 +39,7 @@ namespace Simulation
             // 
             // Start
             // 
-            this.Start.Location = new System.Drawing.Point(26, 430);
+            this.Start.Location = new System.Drawing.Point(27, 457);
             this.Start.Name = "Start";
             this.Start.Size = new System.Drawing.Size(94, 38);
             this.Start.TabIndex = 0;
@@ -61,7 +61,7 @@ namespace Simulation
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Paint += new System.Windows.Forms.PaintEventHandler(this.splitContainer1_Panel2_Paint);
-            this.splitContainer1.Size = new System.Drawing.Size(900, 400);
+            this.splitContainer1.Size = new System.Drawing.Size(900, 420);
             this.splitContainer1.SplitterDistance = 300;
             this.splitContainer1.TabIndex = 1;
             // 
@@ -69,11 +69,13 @@ namespace Simulation
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoSize = true;
             this.ClientSize = new System.Drawing.Size(935, 518);
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.Start);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "Pandemic Simulation";
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             this.ResumeLayout(false);

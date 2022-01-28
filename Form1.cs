@@ -32,142 +32,86 @@ namespace Simulation
             public int y; //store start y point
         };
 
-        Person p1, p2;
-        Shop s1, s2, s3, s4, s5, s6, s7, s8, s9, s10;
-        House h1, h2, h3, h4, h5, h6;
+        Person p1, p2, p3, p4;
+        Shop s1;
+        House h1;
 
         List<House> houses = new List<House> {};
         List<Shop> shops = new List<Shop> { };
         List<Person> people = new List<Person> { };
 
-        private void addHouses(int gapx, int gapy)
+        private void addHouse(int x, int y)
         {
-            //house 1
-            h1.x = gapx;
-            h1.y = gapy;
+            //house
+            h1.x = x;
+            h1.y = y;
             houses.Add(h1);
-            //house 2
-            h2.x = 25+gapx;
-            h2.y = gapy;
-            houses.Add(h2);
-            //house 3
-            h3.x = 50+gapx;
-            h3.y = gapy;
-            houses.Add(h3);
-            //house 4
-            h4.x = gapx;
-            h4.y = 35+gapy;
-            houses.Add(h4);
-            //house 5
-            h5.x = 25+gapx;
-            h5.y = 35+gapy;
-            houses.Add(h5);
-            //house 6
-            h6.x = 50+gapx;
-            h6.y = 35+gapy;
-            houses.Add(h6);
+            //person 1
+            p1.x = x;
+            p1.y = y;
+            p1.status = "Blue";
+            people.Add(p1);
+            //person 2
+            p2.x = x + 10;
+            p2.y = y;
+            p2.status = "Blue";
+            people.Add(p2);
+            //person 3
+            p3.x = x;
+            p3.y = y + 10;
+            p3.status = "Blue";
+            people.Add(p3);
+            //person 4
+            p4.x = x + 10;
+            p4.y = y + 10;
+            p4.status = "Blue";
+            people.Add(p4);
+        }
+
+        private void generateMap()
+        {
+            int x = 0, y = 0;
+            while(x <= 510)
+            {
+                y = 0;
+                while(y <= 360)
+                {
+                    if(((x==85 || x==170) && (y==0 || y==180 || y== 245)) || ((x == 340 || x == 425) && (y == 60 || y == 125)))
+                    {
+                        //add shop
+                        s1.x = x;
+                        s1.y = y;
+                        shops.Add(s1);
+                        if (y == 180 || y==60)
+                            y += 5;
+                        else if (y == 245 || y==125)
+                            y -= 5;
+                    }
+                    else
+                    {
+                        //add row of houses
+                        //row 1
+                        addHouse(x, y);
+                        addHouse(x + 25, y);
+                        addHouse(x + 50, y);
+                        //row 2
+                        addHouse(x, y + 35);
+                        addHouse(x + 25, y + 35);
+                        addHouse(x + 50, y + 35);
+                    }
+                    y += 60;
+                }
+                x += 85;
+            }
         }
 
 
         public Form1()
         {
             InitializeComponent();
-            //person 1
-            p1.x = 10;
-            p1.y = 10;
-            p1.status = "Blue";
-            people.Add(p1);
 
-            //person 1
-            p2.x = 0;
-            p2.y = 0;
-            p2.status = "Blue";
-            people.Add(p2);
-
-            //shop 1
-            s1.x = 85;
-            s1.y = 0;
-            shops.Add(s1);
-            //shop 2
-            s2.x = 170;
-            s2.y = 0;
-            shops.Add(s2);
-            //shop 3
-            s3.x = 170;
-            s3.y = 180;
-            shops.Add(s3);
-            //shop 4
-            s4.x = 85;
-            s4.y = 180;
-            shops.Add(s4);
-            //shop 5
-            s5.x = 85;
-            s5.y = 245;
-            shops.Add(s5);
-            //shop 6
-            s6.x = 170;
-            s6.y = 245;
-            shops.Add(s6);
-            //shop 7
-            s7.x = 340;
-            s7.y = 60;
-            shops.Add(s7);
-            //shop 8
-            s8.x = 340;
-            s8.y = 125;
-            shops.Add(s8);
-            //shop 9
-            s9.x = 425;
-            s9.y = 60;
-            shops.Add(s9);
-            //shop 10
-            s10.x = 425;
-            s10.y = 125;
-            shops.Add(s10);
-
-            //houses 
-            addHouses(0, 0);
-            addHouses(0, 60);
-            addHouses(85, 60);
-            addHouses(170, 60);
-            addHouses(0, 120);
-            addHouses(0, 180);
-            addHouses(0, 240);
-            addHouses(0, 300);
-            addHouses(85, 120);
-            addHouses(170, 120);
-            addHouses(85, 300);
-            addHouses(170, 300);
-            addHouses(255, 0);
-            addHouses(255, 60);
-            addHouses(255, 120);
-            addHouses(255, 180);
-            addHouses(255, 240);
-            addHouses(255, 300);
-            addHouses(340, 0);
-            addHouses(340, 180);
-            addHouses(340, 240);
-            addHouses(340, 300);
-            addHouses(425, 0);
-            addHouses(425, 180);
-            addHouses(425, 240);
-            addHouses(425, 300);
-            addHouses(510, 0);
-            addHouses(510, 60);
-            addHouses(510, 120);
-            addHouses(510, 180);
-            addHouses(510, 240);
-            addHouses(510, 300);
-            addHouses(0, 360);
-            addHouses(85, 360);
-            addHouses(170, 360);
-            addHouses(255, 360);
-            addHouses(340, 360);
-            addHouses(425, 360);
-            addHouses(510, 360);
-
-
-
+            //houses, shops and people
+            generateMap();
         }
 
         private void Start_Click(object sender, EventArgs e)
@@ -186,11 +130,12 @@ namespace Simulation
                 e.Graphics.FillRectangle(Brushes.Gray, shops[i].x, shops[i].y, 70, 50);
 
             //people
-            Brush myBrush = new SolidBrush(Color.FromName(p1.status));
-            e.Graphics.FillEllipse(myBrush, p1.x, p1.y, 10, 10);
+            for(int i = 0; i<people.Count; i++)
+            {
+                Brush myBrush = new SolidBrush(Color.FromName(people[i].status));
+                e.Graphics.FillEllipse(myBrush, people[i].x, people[i].y, 10, 10);
 
-            Brush myBrush2 = new SolidBrush(Color.FromName(p2.status));
-            e.Graphics.FillEllipse(myBrush2, p2.x, p2.y, 10, 10);
+            }
 
         }
 
@@ -200,11 +145,6 @@ namespace Simulation
                 p1.x++;
             if (p1.y < s1.y + 25)
                 p1.y++;
-
-            if (p2.x < s2.x + 35)
-                p2.x++;
-            if (p2.y < s2.y + 25)
-                p2.y++;
 
             splitContainer1.Panel2.Refresh();
         }

@@ -34,11 +34,39 @@ namespace Simulation
 
         Person p1, p2;
         Shop s1, s2;
-        House h1, h2, h3, h4, h5, h6, h7, h8, h9, h10, h11, h12, h13, h14, h15;
+        House h1, h2, h3, h4, h5, h6;
 
         List<House> houses = new List<House> {};
         List<Shop> shops = new List<Shop> { };
         List<Person> people = new List<Person> { };
+
+        private void addHouses(int gapx, int gapy)
+        {
+            //house 1
+            h1.x = gapx;
+            h1.y = gapy;
+            houses.Add(h1);
+            //house 2
+            h2.x = 25+gapx;
+            h2.y = gapy;
+            houses.Add(h2);
+            //house 3
+            h3.x = 50+gapx;
+            h3.y = gapy;
+            houses.Add(h3);
+            //house 4
+            h4.x = gapx;
+            h4.y = 35+gapy;
+            houses.Add(h4);
+            //house 5
+            h5.x = 25+gapx;
+            h5.y = 35+gapy;
+            houses.Add(h5);
+            //house 6
+            h6.x = 50+gapx;
+            h6.y = 35+gapy;
+            houses.Add(h6);
+        }
 
 
         public Form1()
@@ -65,66 +93,11 @@ namespace Simulation
             s2.y = 0;
             shops.Add(s2);
 
-            //house 1
-            h1.x = 0;
-            h1.y = 0;
-            houses.Add(h1);
-            //house 2
-            h2.x = 25;
-            h2.y = 0;
-            houses.Add(h2);
-            //house 3
-            h3.x = 50;
-            h3.y = 0;
-            houses.Add(h3);
-            //house 4
-            h4.x = 0;
-            h4.y = 35;
-            houses.Add(h4);
-            //house 5
-            h5.x = 25;
-            h5.y = 35;
-            houses.Add(h5);
-            //house 6
-            h6.x = 50;
-            h6.y = 35;
-            houses.Add(h6);
-            //house 7
-            h7.x = 0;
-            h7.y = 60;
-            houses.Add(h7);
-            //house 8
-            h8.x = 25;
-            h8.y = 60;
-            houses.Add(h8);
-            //house 9
-            h9.x = 50;
-            h9.y = 60;
-            houses.Add(h9);
-            //house 10
-            h10.x = 80;
-            h10.y = 60;
-            houses.Add(h10);
-            //house 11
-            h11.x = 105;
-            h11.y = 60;
-            houses.Add(h11);
-            //house 12
-            h12.x = 130;
-            h12.y = 60;
-            houses.Add(h12);
-            //house 13
-            h13.x = 165;
-            h13.y = 60;
-            houses.Add(h13);
-            //house 14
-            h14.x = 190;
-            h14.y = 60;
-            houses.Add(h14);
-            //house 15
-            h15.x = 215;
-            h15.y = 60;
-            houses.Add(h15);
+            //houses 
+            addHouses(0, 0);
+            addHouses(0, 60);
+            addHouses(80, 60);
+
 
         }
 

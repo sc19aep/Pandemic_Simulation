@@ -25,7 +25,14 @@ namespace Simulation
         {
             public int x; //start point x location
             public int y; //start point y location
-        }
+        };
+
+        struct Route
+        {
+            public int x;
+            public int y;
+            public List<Route> neighbours;
+        };
 
 
         Person p1, p2, p3, p4;
@@ -34,6 +41,7 @@ namespace Simulation
         List<Building> houses = new List<Building> {};
         List<Building> shops = new List<Building> {};
         List<Person> people = new List<Person> {};
+        List<Route> points = new List<Route> {};
 
         private void addHouse(int x, int y)
         {
@@ -122,6 +130,31 @@ namespace Simulation
             }
         }
 
+        private void Render()
+        {
+            using (var bmp = new Bitmap(pictureBox1.Width, pictureBox1.Height))
+            using (var e = Graphics.FromImage(bmp))
+            {
+                //houses
+                for (int i = 0; i < houses.Count; i++)
+                    e.FillRectangle(Brushes.DarkGray, houses[i].x, houses[i].y, 20, 20); //starting corner, distance from that point
+
+                //shops
+                for (int i = 0; i < shops.Count; i++)
+                    e.FillRectangle(Brushes.Gray, shops[i].x, shops[i].y, 70, 50);
+
+                //people
+                for (int i = 0; i < people.Count; i++)
+                {
+                    Brush myBrush = new SolidBrush(Color.FromName(people[i].status));
+                    e.FillEllipse(myBrush, people[i].x, people[i].y, 10, 10);
+                }
+
+                pictureBox1.Image?.Dispose();
+                pictureBox1.Image = (Bitmap)bmp.Clone();
+            }
+        }
+
         public Form1()
         {
             InitializeComponent();
@@ -129,6 +162,7 @@ namespace Simulation
             //houses, shops and people
             generateMap();
             generateRoute();
+            Render();
         }
 
         private void Start_Click(object sender, EventArgs e)
@@ -136,45 +170,28 @@ namespace Simulation
             timer1.Start();
         }
 
-        private void splitContainer1_Panel2_Paint(object sender, PaintEventArgs e)
-        {
-            //houses
-            for(int i = 0; i<houses.Count; i++)
-                e.Graphics.FillRectangle(Brushes.DarkGray, houses[i].x, houses[i].y, 20, 20); //starting corner, distance from that point
-
-            //shops
-            for (int i = 0; i < shops.Count; i++)
-                e.Graphics.FillRectangle(Brushes.Gray, shops[i].x, shops[i].y, 70, 50);
-
-            //people
-            for(int i = 0; i<people.Count; i++)
-            {
-                Brush myBrush = new SolidBrush(Color.FromName(people[i].status));
-                e.Graphics.FillEllipse(myBrush, people[i].x, people[i].y, 10, 10);
-            }
-        }
-
         private void timer1_Tick(object sender, EventArgs e)
         {
-            for(int i = 0; i<people.Count(); i++)
+            //for(int i = 0; i<people.Count(); i++)
+            Parallel.ForEach<Person>(people, i =>
             {
-                Person p1 = people[i];
-                int target_x = people[i].tasks[0].x;
-                int target_y = people[i].tasks[0].y;
+                int index = people.IndexOf(i);
+                int target_x = i.tasks[0].x;
+                int target_y = i.tasks[0].y;
 
-                if (p1.x < target_x + 35)
-                    p1.x = p1.x + 5;
-                if (p1.y < target_y + 25)
-                    p1.y = p1.y + 5;
-                if (p1.x > target_x + 35)
-                    p1.x = p1.x - 5;
-                if (p1.y > target_y + 25)
-                    p1.y = p1.y - 5;
+                if (i.x < target_x + 35)
+                    i.x = i.x + 1;
+                if (i.y < target_y + 25)
+                    i.y = i.y + 1;
+                if (i.x > target_x + 35)
+                    i.x = i.x - 1;
+                if (i.y > target_y + 25)
+                    i.y = i.y - 1;
 
-                people[i] = p1;
-            }
+                people[index] = i;
+            });
 
-            splitContainer1.Panel2.Refresh();
+            Render();
         }
     }
 }

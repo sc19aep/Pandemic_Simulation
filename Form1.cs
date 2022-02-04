@@ -19,6 +19,7 @@ namespace Simulation
             public string status; //susceptible(blue), infected(red), removed(grey)
             public Building house; //the house the person returns to at the end of the day
             public List<Building> tasks;
+            public Route current; //current point the person is on or heading to
         };
 
         struct Building
@@ -37,6 +38,8 @@ namespace Simulation
 
         Person p1, p2, p3, p4;
         Building s1, h1; //shop 1 and house 1
+        Route r1; //route point
+        Route r0;
 
         List<Building> houses = new List<Building> {};
         List<Building> shops = new List<Building> {};
@@ -55,6 +58,7 @@ namespace Simulation
             p1.status = "Blue";
             p1.tasks = new List<Building> { };
             p1.house = h1;
+            p1.current = r0;
             people.Add(p1);
             //person 2
             p2.x = x + 10;
@@ -62,6 +66,7 @@ namespace Simulation
             p2.status = "Blue";
             p2.tasks = new List<Building> { };
             p2.house = h1;
+            p2.current = r0;
             people.Add(p2);
             //person 3
             p3.x = x;
@@ -69,6 +74,7 @@ namespace Simulation
             p3.status = "Blue";
             p3.tasks = new List<Building> { };
             p3.house = h1;
+            p3.current = r0;
             people.Add(p3);
             //person 4
             p4.x = x + 10;
@@ -76,6 +82,7 @@ namespace Simulation
             p4.status = "Blue";
             p4.tasks = new List<Building> { };
             p4.house = h1;
+            p4.current = r0;
             people.Add(p4);
         }
 
@@ -93,6 +100,12 @@ namespace Simulation
                         s1.x = x;
                         s1.y = y;
                         shops.Add(s1);
+
+                        //route point  
+                        r1.x = x + 76;
+                        r1.y = y + 26;
+                        points.Add(r1);
+                        
                         if (y == 180 || y==60)
                             y += 5;
                         else if (y == 245 || y==125)
@@ -109,6 +122,14 @@ namespace Simulation
                         addHouse(x, y + 35);
                         addHouse(x + 25, y + 35);
                         addHouse(x + 50, y + 35);
+
+                        if(x < 510)
+                        {
+                            //route point
+                            r1.x = x + 76;
+                            r1.y = y + 26;
+                            points.Add(r1);
+                        }
                     }
                     y += 60;
                 }
@@ -130,6 +151,34 @@ namespace Simulation
             }
         }
 
+        private void assignNeighbours()
+        {
+            for(int i = 0; i<points.Count(); i++)
+            {
+                Route r = points[i];
+                //find left neighbor
+                int left = points.FindIndex(n => n.x == r.x - 76 && n.y == r.y);
+                if(left >= 0)
+                    r.neighbours.Add(points[left]);
+
+                //find right neighbor
+                int right = points.FindIndex(n => n.x == r.x + 76 && n.y == r.y);
+                if (right >= 0)
+                    r.neighbours.Add(points[right]);
+
+                //find up neighbor
+                int up = points.FindIndex(n => n.x == r.x && n.y == r.y-26);
+                if (up >= 0)
+                    r.neighbours.Add(points[up]);
+
+                //find down neighbor
+                int down = points.FindIndex(n => n.x == r.x && n.y == r.y+26);
+                if (down >= 0)
+                    r.neighbours.Add(points[down]);
+                points[i] = r;
+            }
+        }
+
         private void Render()
         {
             using (var bmp = new Bitmap(pictureBox1.Width, pictureBox1.Height))
@@ -142,6 +191,10 @@ namespace Simulation
                 //shops
                 for (int i = 0; i < shops.Count; i++)
                     e.FillRectangle(Brushes.Gray, shops[i].x, shops[i].y, 70, 50);
+
+                //route points
+                for (int i = 0; i < points.Count; i++)
+                    e.FillEllipse(Brushes.DarkOrange, points[i].x, points[i].y, 5, 5);
 
                 //people
                 for (int i = 0; i < people.Count; i++)
@@ -158,9 +211,12 @@ namespace Simulation
         public Form1()
         {
             InitializeComponent();
+            r0.x = 0;
+            r0.y = 0;
 
             //houses, shops and people
             generateMap();
+            assignNeighbours();
             generateRoute();
             Render();
         }
@@ -170,26 +226,71 @@ namespace Simulation
             timer1.Start();
         }
 
+        private int FindClosest(int x, int y)
+        {
+            int index = 0;
+            int minx = (points[0].x - x) ^ 2; 
+            int miny = (points[0].y - y) ^ 2;
+            for (int i = 1; i< points.Count(); i++)
+            {
+                int X = (points[i].x - x) ^ 2;
+                int Y = (points[i].y - y) ^ 2;
+                if(X+Y < minx+miny)
+                {
+                    minx = X;
+                    miny = Y;
+                    index = i;
+                }
+            }
+            return index;
+        }
+
         private void timer1_Tick(object sender, EventArgs e)
         {
-            //for(int i = 0; i<people.Count(); i++)
-            Parallel.ForEach<Person>(people, i =>
+            //find nearest route point
+            //follow neighbour route points to the location
+            //go into the location
+            //spend some time in the location
+            //repeat
+
+
+            for(int j = 0; j<people.Count(); j++)
             {
-                int index = people.IndexOf(i);
+                Person i = people[j];
                 int target_x = i.tasks[0].x;
                 int target_y = i.tasks[0].y;
 
-                if (i.x < target_x + 35)
-                    i.x = i.x + 1;
-                if (i.y < target_y + 25)
-                    i.y = i.y + 1;
-                if (i.x > target_x + 35)
-                    i.x = i.x - 1;
-                if (i.y > target_y + 25)
-                    i.y = i.y - 1;
+                if (i.current.x == 0 && i.current.y == 0)
+                {
+                    // if not on a point, find closest point
+                    int indx = FindClosest(i.x, i.y);
+                    i.current = points[indx];
 
-                people[index] = i;
-            });
+                }
+                else if(i.current.x == i.x && i.current.y == i.y)
+                {
+                    //find neighbor closest to the target
+                    int indx = FindClosest(target_x, target_y);
+                    i.current = points[indx];
+                }
+
+                target_x = i.current.x;
+                target_y = i.current.y;
+
+                
+
+
+                if (i.x < target_x )//+35
+                    i.x++;
+                else if (i.x > target_x)
+                    i.x--;
+                if (i.y < target_y ) //+25
+                    i.y++;
+                else if (i.y > target_y )
+                    i.y--;
+
+                people[j] = i;
+            }
 
             Render();
         }

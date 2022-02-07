@@ -277,53 +277,92 @@ namespace Simulation
             for(int j = 0; j<people.Count(); j++)
             {
                 Person i = people[j];
-                float target_x = i.tasks[0].x;
-                float target_y = i.tasks[0].y;
-
-                if (i.current.x == 0 && i.current.y == 0)
+                float target_x, target_y;
+                if(i.tasks.Count > 0)
                 {
-                    // if not on a point, find closest point
-                    int indx = FindClosest(i.x, i.y, points);
-                    i.current = points[indx];
-                }
-                else if(i.current.x == i.x && i.current.y == i.y)
-                {
-                    //find neighbour closest to the target
-                    int indx = FindClosest(target_x+31.5f, target_y+25, i.current.neighbours);
-                    i.current = i.current.neighbours[indx];
-
-                    //check if self is the closest neighbour to target
-                    if(indx == 0)
-                    {
-                        i.shopping = 1;
-                    }
-                }
-
-                target_x += 35;
-                target_y += 25;
-
-                if (i.shopping >= 1)
-                {
-                    //move into the shop and then move around there for a while
-
-                    if(i.x == target_x && i.y == target_y)
-                    {
-                        Random rnd = new Random();
-                        int num_x = rnd.Next(1, 69);
-                        int num_y = rnd.Next(1, 49);
-                        target_x = i.tasks[0].x + num_x;
-                        target_y = i.tasks[0].y + num_y;
-                    }
-
-                    i.shopping++;
-
+                    //check if there are any tasks left
+                    target_x = i.tasks[0].x;
+                    target_y = i.tasks[0].y;
                 }
                 else
                 {
-                    //move to the next route point
-                    target_x = i.current.x;
-                    target_y = i.current.y;
+                    //if tasks finished go home
+                    target_x = i.house.x;
+                    target_y = i.house.y;
                 }
+
+                if(i.shopping == 0)
+                {
+                    if (i.current.x == 0 && i.current.y == 0)
+                    {
+                        // if not on a point, find closest point
+                        int indx = FindClosest(i.x, i.y, points);
+                        i.current = points[indx];
+                    }
+                    else if (i.current.x == i.x && i.current.y == i.y)
+                    {
+                        if(i.tasks.Count > 0)
+                        {
+                            //find neighbour closest to the target
+                            int indx = FindClosest(target_x + 31.5f, target_y + 25, i.current.neighbours);
+                            i.current = i.current.neighbours[indx];
+
+                            //check if self is the closest neighbour to target
+                            if (indx == 0)
+                                i.shopping = 1;
+                        }
+                        else
+                        {
+                            //find neighbour closest to the house
+                            int indx = FindClosest(target_x + 10, target_y + 10, i.current.neighbours);
+                            i.current = i.current.neighbours[indx];
+
+                            //check if self is the closest neighbour to target
+                            if (indx == 0)
+                                i.shopping = -1;
+                        }
+                        
+                    }
+                }
+                else
+                {
+                    if(i.shopping > 0)
+                    {
+                        //move into the shop and then move around there for a while
+
+                        if (i.x == i.current.x && i.y == i.current.y)
+                        {
+                            Random rnd = new Random();
+                            int num_x = rnd.Next(0, 59);
+                            int num_y = rnd.Next(0, 39);
+                            i.current.x = (int)target_x + num_x;
+                            i.current.y = (int)target_y + num_y;
+                        }
+
+                        i.shopping++;
+
+                        if (i.shopping == 1000)
+                        {
+                            i.tasks.RemoveAt(0);
+                            i.shopping = 0;
+                            i.current = r0;
+                        }
+                    }
+                    else
+                    {
+                        if (i.x == i.current.x && i.y == i.current.y)
+                        {
+                            Random rnd = new Random();
+                            int num_x = rnd.Next(0, 9);
+                            int num_y = rnd.Next(0, 9);
+                            i.current.x = (int)target_x + num_x;
+                            i.current.y = (int)target_y + num_y;
+                        }
+                    }
+                }
+
+                target_x = i.current.x;
+                target_y = i.current.y;
 
 
                 if (i.x < target_x )//+35

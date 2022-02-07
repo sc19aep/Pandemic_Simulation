@@ -33,12 +33,13 @@ namespace Simulation
             this.Start = new System.Windows.Forms.Button();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.Stop = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // Start
             // 
-            this.Start.Location = new System.Drawing.Point(27, 457);
+            this.Start.Location = new System.Drawing.Point(12, 460);
             this.Start.Name = "Start";
             this.Start.Size = new System.Drawing.Size(94, 38);
             this.Start.TabIndex = 0;
@@ -59,12 +60,23 @@ namespace Simulation
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
             // 
+            // Stop
+            // 
+            this.Stop.Location = new System.Drawing.Point(112, 460);
+            this.Stop.Name = "Stop";
+            this.Stop.Size = new System.Drawing.Size(98, 38);
+            this.Stop.TabIndex = 1;
+            this.Stop.Text = "Stop";
+            this.Stop.UseVisualStyleBackColor = true;
+            this.Stop.Click += new System.EventHandler(this.Stop_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
             this.ClientSize = new System.Drawing.Size(824, 510);
+            this.Controls.Add(this.Stop);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.Start);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
@@ -80,6 +92,7 @@ namespace Simulation
         private System.Windows.Forms.Button Start;
         public System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.Button Stop;
     }
 }
 

@@ -20,6 +20,7 @@ namespace Simulation
             public Building house; //the house the person returns to at the end of the day
             public List<Building> tasks;
             public Route current; //current point the person is on or heading to
+            public int shopping; //checks if person is in a shop and how long they have been there already
         };
 
         struct Building
@@ -59,6 +60,7 @@ namespace Simulation
             p1.tasks = new List<Building> { };
             p1.house = h1;
             p1.current = r0;
+            p1.shopping = 0;
             people.Add(p1);
             //person 2
             p2.x = x + 10;
@@ -67,6 +69,7 @@ namespace Simulation
             p2.tasks = new List<Building> { };
             p2.house = h1;
             p2.current = r0;
+            p2.shopping = 0;
             people.Add(p2);
             //person 3
             p3.x = x;
@@ -75,6 +78,7 @@ namespace Simulation
             p3.tasks = new List<Building> { };
             p3.house = h1;
             p3.current = r0;
+            p3.shopping = 0;
             people.Add(p3);
             //person 4
             p4.x = x + 10;
@@ -83,6 +87,7 @@ namespace Simulation
             p4.tasks = new List<Building> { };
             p4.house = h1;
             p4.current = r0;
+            p4.shopping = 0;
             people.Add(p4);
         }
 
@@ -236,7 +241,12 @@ namespace Simulation
             timer1.Start();
         }
 
-        private int FindClosest(int x, int y, List<Route> route)
+        private void Stop_Click(object sender, EventArgs e)
+        {
+            timer1.Stop();
+        }
+
+        private int FindClosest(float x, float y, List<Route> route)
         {
             int index = 0;
             float minx = (route[0].x - x) * (route[0].x - x); 
@@ -264,12 +274,11 @@ namespace Simulation
             //spend some time in the location
             //repeat
 
-
             for(int j = 0; j<people.Count(); j++)
             {
                 Person i = people[j];
-                int target_x = i.tasks[0].x;
-                int target_y = i.tasks[0].y;
+                float target_x = i.tasks[0].x;
+                float target_y = i.tasks[0].y;
 
                 if (i.current.x == 0 && i.current.y == 0)
                 {
@@ -280,27 +289,48 @@ namespace Simulation
                 else if(i.current.x == i.x && i.current.y == i.y)
                 {
                     //find neighbour closest to the target
-                    int indx = FindClosest(target_x, target_y, i.current.neighbours);
+                    int indx = FindClosest(target_x+31.5f, target_y+25, i.current.neighbours);
                     i.current = i.current.neighbours[indx];
 
                     //check if self is the closest neighbour to target
                     if(indx == 0)
                     {
-
+                        i.shopping = 1;
                     }
                 }
 
-                 target_x = i.current.x;
-                 target_y = i.current.y;
+                target_x += 35;
+                target_y += 25;
 
-                
+                if (i.shopping >= 1)
+                {
+                    //move into the shop and then move around there for a while
+
+                    if(i.x == target_x && i.y == target_y)
+                    {
+                        Random rnd = new Random();
+                        int num_x = rnd.Next(1, 69);
+                        int num_y = rnd.Next(1, 49);
+                        target_x = i.tasks[0].x + num_x;
+                        target_y = i.tasks[0].y + num_y;
+                    }
+
+                    i.shopping++;
+
+                }
+                else
+                {
+                    //move to the next route point
+                    target_x = i.current.x;
+                    target_y = i.current.y;
+                }
 
 
                 if (i.x < target_x )//+35
                     i.x++;
                 else if (i.x > target_x)
                     i.x--;
-                else if (i.y < target_y ) //+25
+                if (i.y < target_y ) //+25
                     i.y++;
                 else if (i.y > target_y )
                     i.y--;

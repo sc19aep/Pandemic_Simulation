@@ -128,6 +128,7 @@ namespace Simulation
                             //route point
                             r1.x = x + 76;
                             r1.y = y + 26;
+                            r1.neighbours = new List<Route> { };
                             points.Add(r1);
                         }
                     }
@@ -157,22 +158,22 @@ namespace Simulation
             {
                 Route r = points[i];
                 //find left neighbor
-                int left = points.FindIndex(n => n.x == r.x - 76 && n.y == r.y);
+                int left = points.FindIndex(n => n.x == r.x - 85 && n.y == r.y);
                 if(left >= 0)
                     r.neighbours.Add(points[left]);
 
                 //find right neighbor
-                int right = points.FindIndex(n => n.x == r.x + 76 && n.y == r.y);
+                int right = points.FindIndex(n => n.x == r.x + 85 && n.y == r.y);
                 if (right >= 0)
                     r.neighbours.Add(points[right]);
 
                 //find up neighbor
-                int up = points.FindIndex(n => n.x == r.x && n.y == r.y-26);
+                int up = points.FindIndex(n => n.x == r.x && n.y == r.y-60);
                 if (up >= 0)
                     r.neighbours.Add(points[up]);
 
                 //find down neighbor
-                int down = points.FindIndex(n => n.x == r.x && n.y == r.y+26);
+                int down = points.FindIndex(n => n.x == r.x && n.y == r.y+60);
                 if (down >= 0)
                     r.neighbours.Add(points[down]);
                 points[i] = r;
@@ -213,6 +214,7 @@ namespace Simulation
             InitializeComponent();
             r0.x = 0;
             r0.y = 0;
+            r0.neighbours = new List<Route> { };
 
             //houses, shops and people
             generateMap();
@@ -226,15 +228,16 @@ namespace Simulation
             timer1.Start();
         }
 
-        private int FindClosest(int x, int y)
+        private int FindClosest(int x, int y, List<Route> route)
         {
             int index = 0;
-            int minx = (points[0].x - x) ^ 2; 
-            int miny = (points[0].y - y) ^ 2;
-            for (int i = 1; i< points.Count(); i++)
+            float minx = (route[0].x - x) * (route[0].x - x); 
+            float miny = (route[0].y - y) * (route[0].y - y);
+
+            for (int i = 1; i< route.Count(); i++)
             {
-                int X = (points[i].x - x) ^ 2;
-                int Y = (points[i].y - y) ^ 2;
+                float X = (route[i].x - x) * (route[i].x - x);
+                float Y = (route[i].y - y) * (route[i].y - y);
                 if(X+Y < minx+miny)
                 {
                     minx = X;
@@ -263,19 +266,18 @@ namespace Simulation
                 if (i.current.x == 0 && i.current.y == 0)
                 {
                     // if not on a point, find closest point
-                    int indx = FindClosest(i.x, i.y);
+                    int indx = FindClosest(i.x, i.y, points);
                     i.current = points[indx];
-
                 }
                 else if(i.current.x == i.x && i.current.y == i.y)
                 {
                     //find neighbor closest to the target
-                    int indx = FindClosest(target_x, target_y);
-                    i.current = points[indx];
+                    int indx = FindClosest(target_x, target_y, i.current.neighbours);
+                    i.current = i.current.neighbours[indx];
                 }
 
-                target_x = i.current.x;
-                target_y = i.current.y;
+                 target_x = i.current.x;
+                 target_y = i.current.y;
 
                 
 

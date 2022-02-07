@@ -39,13 +39,17 @@ namespace Simulation
 
         Person p1, p2, p3, p4;
         Building s1, h1; //shop 1 and house 1
-        Route r1; //route point
-        Route r0;
+        Route r1, r0; //route point
+
+        int ticks = 0;
+
 
         List<Building> houses = new List<Building> {};
         List<Building> shops = new List<Building> {};
         List<Person> people = new List<Person> {};
         List<Route> points = new List<Route> {};
+
+        
 
         private void addHouse(int x, int y)
         {
@@ -136,11 +140,15 @@ namespace Simulation
 
             for (int i=0; i<people.Count(); i++)
             {
+                Person p = people[i];
+                p.current = r0;
+                p.shopping = 0;
                 for(int j = 0; j<3; j++)
                 {
                     int num = rnd.Next(0, shops.Count());
-                    people[i].tasks.Add(shops[num]);
+                    p.tasks.Add(shops[num]);
                 }
+                people[i] = p;
             }
         }
 
@@ -268,6 +276,8 @@ namespace Simulation
 
         private void timer1_Tick(object sender, EventArgs e)
         {
+            ticks++;
+
             //find nearest route point
             //follow neighbour route points to the location
             //go into the location
@@ -320,8 +330,7 @@ namespace Simulation
                             //check if self is the closest neighbour to target
                             if (indx == 0)
                                 i.shopping = -1;
-                        }
-                        
+                        }  
                     }
                 }
                 else
@@ -360,7 +369,6 @@ namespace Simulation
                         }
                     }
                 }
-
                 target_x = i.current.x;
                 target_y = i.current.y;
 
@@ -376,8 +384,13 @@ namespace Simulation
 
                 people[j] = i;
             }
-
             Render();
+
+            if (ticks == 6000)
+            {
+                generateRoute();
+                ticks = 0;
+            }
         }
     }
 }

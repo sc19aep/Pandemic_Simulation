@@ -94,17 +94,12 @@ namespace Simulation
                 y = 0;
                 while(y <= 360)
                 {
-                    if(((x==85 || x==170) && (y==0 || y==180 || y== 245)) || ((x == 340 || x == 425) && (y == 60 || y == 125)))
+                    if (((x==85 || x==170) && (y==0 || y==180 || y== 245)) || ((x == 340 || x == 425) && (y == 60 || y == 125)))
                     {
                         //add shop
                         s1.x = x;
                         s1.y = y;
                         shops.Add(s1);
-
-                        //route point  
-                        r1.x = x + 76;
-                        r1.y = y + 26;
-                        points.Add(r1);
                         
                         if (y == 180 || y==60)
                             y += 5;
@@ -123,14 +118,6 @@ namespace Simulation
                         addHouse(x + 25, y + 35);
                         addHouse(x + 50, y + 35);
 
-                        if(x < 510)
-                        {
-                            //route point
-                            r1.x = x + 76;
-                            r1.y = y + 26;
-                            r1.neighbours = new List<Route> { };
-                            points.Add(r1);
-                        }
                     }
                     y += 60;
                 }
@@ -154,7 +141,28 @@ namespace Simulation
 
         private void assignNeighbours()
         {
-            for(int i = 0; i<points.Count(); i++)
+            int x = 0, y = 0;
+            while (x <= 510)
+            {
+                y = 0;
+                while (y <= 360)
+                {
+                    if (x < 510)
+                    {
+                        //route point
+                        r1.x = x + 74;
+                        r1.y = y + 24;
+                        r1.neighbours = new List<Route> { };
+                        r1.neighbours.Add(r1);
+                        points.Add(r1);
+                    }
+                    y += 60;
+                }
+                x += 85;
+            }
+
+
+                    for (int i = 0; i<points.Count(); i++)
             {
                 Route r = points[i];
                 //find left neighbor
@@ -271,9 +279,15 @@ namespace Simulation
                 }
                 else if(i.current.x == i.x && i.current.y == i.y)
                 {
-                    //find neighbor closest to the target
+                    //find neighbour closest to the target
                     int indx = FindClosest(target_x, target_y, i.current.neighbours);
                     i.current = i.current.neighbours[indx];
+
+                    //check if self is the closest neighbour to target
+                    if(indx == 0)
+                    {
+
+                    }
                 }
 
                  target_x = i.current.x;
@@ -286,7 +300,7 @@ namespace Simulation
                     i.x++;
                 else if (i.x > target_x)
                     i.x--;
-                if (i.y < target_y ) //+25
+                else if (i.y < target_y ) //+25
                     i.y++;
                 else if (i.y > target_y )
                     i.y--;

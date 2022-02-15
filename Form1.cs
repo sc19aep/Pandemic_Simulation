@@ -42,6 +42,7 @@ namespace Simulation
         Route r1, r0; //route point
 
         int ticks = 0;
+        int infectionPercentage = 5;
 
 
         List<Building> houses = new List<Building> {};
@@ -233,6 +234,7 @@ namespace Simulation
         public Form1()
         {
             InitializeComponent();
+
             // null route point
             r0.x = 0;
             r0.y = 0;
@@ -284,6 +286,34 @@ namespace Simulation
             return index;
         }
 
+        private void spreadInfection(int i)
+        {
+            Person p = people[i];
+
+            //check for nearby people
+            for(int j = 0; j < people.Count(); j++)
+            {
+                //persons middle point
+                int px = people[j].x + 5;
+                int py = people[j].y + 5;
+                //check if within 5 pixel vicinity and if in the same building/outside
+                if(px > p.x-5 && px < p.x+5 && py > p.y-5 && py < p.y+5 && people[j].shopping==p.shopping)
+                {
+                    Random rnd = new Random();
+                    int prob = rnd.Next(0, 100);
+                    if(prob <= infectionPercentage)
+                    {
+                        Person r = people[j];
+                        r.status = "Red";
+                        people[j] = r;
+                    }
+
+                }
+            }
+
+            //infect neraby people
+        }
+
         private void timer1_Tick(object sender, EventArgs e)
         {
             ticks++;
@@ -300,6 +330,10 @@ namespace Simulation
             for(int j = 0; j<people.Count(); j++)
             {
                 Person i = people[j];
+
+                if(i.status == "Red")
+                    spreadInfection(j);
+
                 float target_x, target_y;
                 if(i.tasks.Count > 0)
                 {
@@ -390,7 +424,7 @@ namespace Simulation
                     i.x++;
                 else if (i.x > target_x)
                     i.x--;
-                if (i.y < target_y ) //+25
+                else if (i.y < target_y ) //+25
                     i.y++;
                 else if (i.y > target_y )
                     i.y--;

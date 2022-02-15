@@ -233,6 +233,7 @@ namespace Simulation
         public Form1()
         {
             InitializeComponent();
+            // null route point
             r0.x = 0;
             r0.y = 0;
             r0.neighbours = new List<Route> { };
@@ -241,6 +242,15 @@ namespace Simulation
             generateMap();
             assignNeighbours();
             generateRoute();
+
+            //initial infected person
+            Random rnd = new Random();
+            int num = rnd.Next(0, people.Count());
+            Person p = people[num];
+            p.status = "Red";
+            people[num] = p;
+
+            //draw the map
             Render();
         }
 
@@ -282,7 +292,10 @@ namespace Simulation
             //follow neighbour route points to the location
             //go into the location
             //spend some time in the location
-            //repeat
+            //repeat x3
+            //go home following the same logic
+            //wait till morning
+            //repeat everyhting with new locations
 
             for(int j = 0; j<people.Count(); j++)
             {

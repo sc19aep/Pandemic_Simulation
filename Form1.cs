@@ -104,16 +104,19 @@ namespace Simulation
                 y = 0;
                 while(y <= 360)
                 {
-                    if (((x==85 || x==170) && (y==0 || y==180 || y== 245)) || ((x == 340 || x == 425) && (y == 60 || y == 125)))
+                    if (((x==85 || x==170) && (y==0 || y==180 || y== 245)) || ((x == 340 || x == 425) && (y == 60 || y == 125)) || ((x==255 || x==340) && y==360))
                     {
+                        if (y == 360)
+                            y += 5;
+
                         //add shop
                         s1.x = x;
                         s1.y = y;
                         shops.Add(s1);
                         
-                        if (y == 180 || y==60)
+                        if (y == 180 || y==60 )
                             y += 5;
-                        else if (y == 245 || y==125)
+                        else if (y == 245 || y==125 )
                             y -= 5;
                     }
                     else
@@ -223,7 +226,7 @@ namespace Simulation
                 for (int i = 0; i < people.Count; i++)
                 {
                     Brush myBrush = new SolidBrush(Color.FromName(people[i].status));
-                    e.FillEllipse(myBrush, people[i].x, people[i].y, 10, 10);
+                    e.FillEllipse(myBrush, people[i].x, people[i].y, 3, 3);
                 }
 
                 pictureBox1.Image?.Dispose();
@@ -296,8 +299,9 @@ namespace Simulation
                 //persons middle point
                 int px = people[j].x + 5;
                 int py = people[j].y + 5;
+
                 //check if within 5 pixel vicinity and if in the same building/outside
-                if(px > p.x-5 && px < p.x+5 && py > p.y-5 && py < p.y+5 && people[j].shopping==p.shopping)
+                if(px > p.x-5 && px < p.x+5 && py > p.y-5 && py < p.y+5 && people[j].shopping==p.shopping && people[j].status =="Blue")
                 {
                     Random rnd = new Random();
                     int prob = rnd.Next(0, 100);
@@ -331,7 +335,7 @@ namespace Simulation
             {
                 Person i = people[j];
 
-                if(i.status == "Red")
+                if(i.status == "Red" || i.status == "Pink")
                     spreadInfection(j);
 
                 float target_x, target_y;
@@ -397,7 +401,7 @@ namespace Simulation
 
                         i.shopping++;
 
-                        if (i.shopping == 1000)
+                        if (i.shopping == 300)
                         {
                             i.tasks.RemoveAt(0);
                             i.shopping = 0;
@@ -433,7 +437,7 @@ namespace Simulation
             }
             Render();
 
-            if (ticks == 6000)
+            if (ticks == 4000)
             {
                 generateRoute();
                 ticks = 0;

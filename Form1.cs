@@ -43,7 +43,7 @@ namespace Simulation
         Route r1, r0; //route point
 
         int ticks = 0;
-        int infectionPercentage = 100;
+        decimal infectionPercentage = 0.01M;
         int day = 4000;
         int prevI = 1;
 
@@ -266,9 +266,15 @@ namespace Simulation
             Render();
         }
 
+        private void numericUpDown1_ValueChanged(object sender, EventArgs e)
+        {
+            infectionPercentage = numericUpDown1.Value;
+        }
+
         private void Start_Click(object sender, EventArgs e)
         {
             timer1.Start();
+            numericUpDown1.Enabled = false;
         }
 
         private void Stop_Click(object sender, EventArgs e)
@@ -313,7 +319,8 @@ namespace Simulation
                     //infect neraby people
                     Random rnd = new Random();
                     int prob = rnd.Next(0, 10000);
-                    if(prob <= infectionPercentage)
+                    int inf = (int)(infectionPercentage * 100);
+                    if(prob <= inf)
                     {
                         Person r = people[j];
                         r.status = "Red";

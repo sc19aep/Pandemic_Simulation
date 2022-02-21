@@ -21,6 +21,7 @@ namespace Simulation
             public List<Building> tasks;
             public Route current; //current point the person is on or heading to
             public int shopping; //checks if person is in a shop and how long they have been there already
+            public int infected; //counts how long the person has been infected, to know when they are no longer ill
         };
 
         struct Building
@@ -42,7 +43,9 @@ namespace Simulation
         Route r1, r0; //route point
 
         int ticks = 0;
-        int infectionPercentage = 5;
+        int infectionPercentage = 100;
+        int day = 4000;
+        int prevI = 1;
 
 
         List<Building> houses = new List<Building> {};
@@ -66,6 +69,7 @@ namespace Simulation
             p1.house = h1;
             p1.current = r0;
             p1.shopping = 0;
+            p1.infected = 0;
             people.Add(p1);
             //person 2
             p2.x = x + 10;
@@ -75,6 +79,7 @@ namespace Simulation
             p2.house = h1;
             p2.current = r0;
             p2.shopping = 0;
+            p2.infected = 0;
             people.Add(p2);
             //person 3
             p3.x = x;
@@ -84,6 +89,7 @@ namespace Simulation
             p3.house = h1;
             p3.current = r0;
             p3.shopping = 0;
+            p3.infected = 0;
             people.Add(p3);
             //person 4
             p4.x = x + 10;
@@ -93,6 +99,7 @@ namespace Simulation
             p4.house = h1;
             p4.current = r0;
             p4.shopping = 0;
+            p4.infected = 0;
             people.Add(p4);
         }
 
@@ -303,8 +310,9 @@ namespace Simulation
                 //check if within 5 pixel vicinity and if in the same building/outside
                 if(px > p.x-5 && px < p.x+5 && py > p.y-5 && py < p.y+5 && people[j].shopping==p.shopping && people[j].status =="Blue")
                 {
+                    //infect neraby people
                     Random rnd = new Random();
-                    int prob = rnd.Next(0, 100);
+                    int prob = rnd.Next(0, 10000);
                     if(prob <= infectionPercentage)
                     {
                         Person r = people[j];
@@ -315,12 +323,15 @@ namespace Simulation
                 }
             }
 
-            //infect neraby people
+            
         }
+
+
 
         private void timer1_Tick(object sender, EventArgs e)
         {
             ticks++;
+            int infected = 0;
 
             //find nearest route point
             //follow neighbour route points to the location
@@ -336,7 +347,15 @@ namespace Simulation
                 Person i = people[j];
 
                 if(i.status == "Red" || i.status == "Pink")
+                {
+                    infected++;
+                    i.infected++;
                     spreadInfection(j);
+                }
+
+                if (i.infected == day * 2)
+                    i.status = "Gray";
+                    
 
                 float target_x, target_y;
                 if(i.tasks.Count > 0)
@@ -437,10 +456,13 @@ namespace Simulation
             }
             Render();
 
-            if (ticks == 4000)
+            if (ticks == day)
             {
                 generateRoute();
                 ticks = 0;
+                double valueR = (double)infected / prevI;
+                prevI = infected;
+                label2.Text = valueR.ToString("#.###");
             }
         }
     }

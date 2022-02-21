@@ -225,10 +225,6 @@ namespace Simulation
                 for (int i = 0; i < shops.Count; i++)
                     e.FillRectangle(Brushes.Gray, shops[i].x, shops[i].y, 70, 50);
 
-                //route points
-                for (int i = 0; i < points.Count; i++)
-                    e.FillEllipse(Brushes.DarkOrange, points[i].x, points[i].y, 5, 5);
-
                 //people
                 for (int i = 0; i < people.Count; i++)
                 {
@@ -339,6 +335,7 @@ namespace Simulation
         {
             ticks++;
             int infected = 0;
+            int susceptible = 0;
 
             //find nearest route point
             //follow neighbour route points to the location
@@ -362,6 +359,9 @@ namespace Simulation
 
                 if (i.infected == day * 2)
                     i.status = "Gray";
+
+                if (i.status == "Blue")
+                    susceptible++;
                     
 
                 float target_x, target_y;
@@ -419,8 +419,8 @@ namespace Simulation
                         if (i.x == i.current.x && i.y == i.current.y)
                         {
                             Random rnd = new Random();
-                            int num_x = rnd.Next(0, 59);
-                            int num_y = rnd.Next(0, 39);
+                            int num_x = rnd.Next(0, 66);
+                            int num_y = rnd.Next(0, 46);
                             i.current.x = (int)target_x + num_x;
                             i.current.y = (int)target_y + num_y;
                         }
@@ -439,8 +439,8 @@ namespace Simulation
                         if (i.x == i.current.x && i.y == i.current.y)
                         {
                             Random rnd = new Random();
-                            int num_x = rnd.Next(0, 9);
-                            int num_y = rnd.Next(0, 9);
+                            int num_x = rnd.Next(0, 16);
+                            int num_y = rnd.Next(0, 16);
                             i.current.x = (int)target_x + num_x;
                             i.current.y = (int)target_y + num_y;
                         }
@@ -467,7 +467,7 @@ namespace Simulation
             {
                 generateRoute();
                 ticks = 0;
-                double valueR = (double)infected / prevI;
+                double valueR = infected / (prevI * ((double)susceptible/people.Count));
                 prevI = infected;
                 label2.Text = valueR.ToString("#.###");
             }

@@ -43,8 +43,14 @@ namespace Simulation
         Route r1, r0; //route point
 
         int ticks = 0;
-        decimal infectionPercentage = 0.01M;
+        decimal infectionPercentage = 0.10M;
+        decimal asymp = 0.01M;
+        int maskUptake = 50;
+        int vaccineUptake = 50;
+        int distanceUptake = 70;
         int day = 4000;
+        int days = 2;
+        int latency = 0;
         int prevI = 1;
 
 
@@ -264,13 +270,50 @@ namespace Simulation
 
         private void numericUpDown1_ValueChanged(object sender, EventArgs e)
         {
-            infectionPercentage = numericUpDown1.Value;
+            infectionPercentage = infectionUpDown.Value;
+        }
+
+        private void numericUpDown2_ValueChanged(object sender, EventArgs e)
+        {
+            maskUptake = (int)maskUpDown.Value;
+        }
+
+        private void daysUpDown_ValueChanged(object sender, EventArgs e)
+        {
+            days = (int)daysUpDown.Value;
+        }
+
+        private void latencyUpDown_ValueChanged(object sender, EventArgs e)
+        {
+            latency = (int)latencyUpDown.Value;
+        }
+
+        private void asymptomaticUpDown_ValueChanged(object sender, EventArgs e)
+        {
+            asymp = asymptomaticUpDown.Value; 
+        }
+
+        private void vaccineUpDown_ValueChanged(object sender, EventArgs e)
+        {
+            vaccineUptake = (int)vaccineUpDown.Value;
+        }
+
+        private void distanceUpDown_ValueChanged(object sender, EventArgs e)
+        {
+            distanceUptake = (int)distanceUpDown.Value;
         }
 
         private void Start_Click(object sender, EventArgs e)
         {
             timer1.Start();
-            numericUpDown1.Enabled = false;
+            infectionUpDown.Enabled = false;
+            daysUpDown.Enabled = false;
+            latencyUpDown.Enabled = false;
+            asymptomaticUpDown.Enabled = false;
+            //maskUpDown.Enabled = false;
+            //vaccineUpDown.Enabled = false;
+            //distanceUpDown.Enabled = false;
+
         }
 
         private void Stop_Click(object sender, EventArgs e)
@@ -357,7 +400,7 @@ namespace Simulation
                     spreadInfection(j);
                 }
 
-                if (i.infected == day * 2)
+                if (i.infected == day * days)
                     i.status = "Gray";
 
                 if (i.status == "Blue")

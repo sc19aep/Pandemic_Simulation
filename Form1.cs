@@ -50,7 +50,8 @@ namespace Simulation
         int distanceUptake = 70;
         int day = 4000; //ticks in a day
         int days = 2; // length of infection
-        int latency = 0; 
+        int latency = 0;
+        int immune = 4; //length of removed status
         int prevI = 1;
 
 
@@ -303,6 +304,11 @@ namespace Simulation
             distanceUptake = (int)distanceUpDown.Value;
         }
 
+        private void ImmunityUpDown_ValueChanged(object sender, EventArgs e)
+        {
+            immune = (int)ImmunityUpDown.Value;
+        }
+
         private void Lockdown_Click(object sender, EventArgs e)
         {
             //start lockdown
@@ -327,13 +333,14 @@ namespace Simulation
             daysUpDown.Enabled = true;
             latencyUpDown.Enabled = true;
             asymptomaticUpDown.Enabled = true;
+            ImmunityUpDown.Enabled = true;
             maskUpDown.Enabled = true;
             vaccineUpDown.Enabled = true;
             distanceUpDown.Enabled = true;
             Pandemic.Enabled = true;
             Start.Enabled = true;
             Stop.Enabled = false;
-            Lockdown.Enabled = true;
+            Lockdown.Enabled = false;
             Freedom.Enabled = false;
 
 
@@ -385,7 +392,12 @@ namespace Simulation
             vaccineUpDown.Enabled = false;
             distanceUpDown.Enabled = false;
             Pandemic.Enabled = false;
+            Lockdown.Enabled = true;
+
+
         }
+
+
 
         private void Start_Click(object sender, EventArgs e)
         {
@@ -395,6 +407,7 @@ namespace Simulation
             daysUpDown.Enabled = false;
             latencyUpDown.Enabled = false;
             asymptomaticUpDown.Enabled = false;
+            ImmunityUpDown.Enabled = false;
             Stop.Enabled = true;
             Start.Enabled = false;
 
@@ -487,7 +500,7 @@ namespace Simulation
                     spreadInfection(j);
                 }
 
-                if(i.infected == day * latency && i.status == "Pink")
+                if(i.status == "Pink" && i.infected == day * latency)
                 {
                     //check if asymptomatic
                     Random rnd = new Random();
@@ -501,6 +514,12 @@ namespace Simulation
 
                 if (i.infected == day * (days+latency))
                     i.status = "Gray";
+
+                if(i.status == "Gray" && i.infected == day * (days+latency+immune))
+                {
+                    i.status = "Blue";
+                    i.infected = 0;
+                }
 
                 if (i.status == "Blue")
                     susceptible++;

@@ -48,9 +48,9 @@ namespace Simulation
         int maskUptake = 50;
         int vaccineUptake = 50;
         int distanceUptake = 70;
-        int day = 4000;
-        int days = 2;
-        int latency = 0;
+        int day = 4000; //ticks in a day
+        int days = 2; // length of infection
+        int latency = 0; 
         int prevI = 1;
 
 
@@ -303,22 +303,109 @@ namespace Simulation
             distanceUptake = (int)distanceUpDown.Value;
         }
 
+        private void Lockdown_Click(object sender, EventArgs e)
+        {
+            //start lockdown
+            Lockdown.Enabled = false;
+            Freedom.Enabled = true;
+        }
+
+        private void Freedom_Click(object sender, EventArgs e)
+        {
+            //end lockdown
+            Freedom.Enabled = false;
+            Lockdown.Enabled = true;
+            
+        }
+
+        private void Restart_Click(object sender, EventArgs e)
+        {
+            //restart the simulation
+            timer1.Stop();
+            ticks = 0;
+            infectionUpDown.Enabled = true;
+            daysUpDown.Enabled = true;
+            latencyUpDown.Enabled = true;
+            asymptomaticUpDown.Enabled = true;
+            maskUpDown.Enabled = true;
+            vaccineUpDown.Enabled = true;
+            distanceUpDown.Enabled = true;
+            Pandemic.Enabled = true;
+            Start.Enabled = true;
+            Stop.Enabled = false;
+            Lockdown.Enabled = true;
+            Freedom.Enabled = false;
+
+
+            //reset people location to house
+            for (int i=0; i<people.Count(); i++)
+            {
+                Person p = people[i];
+                p.x = p.house.x;
+                p.y = p.house.y;
+
+                if (i % 4 == 1)
+                    p.x += 10;
+                else if (i % 4 == 2)
+                    p.y += 10;
+                else if( i%4 == 3)
+                {
+                    p.x += 10;
+                    p.y += 10;
+                }
+
+                p.status = "Blue";
+                p.current = r0;
+                p.shopping = 0;
+                p.infected = 0;
+
+                p.tasks.RemoveRange(0, p.tasks.Count());
+
+                people[i] = p;
+            }
+
+            //generate new tasks
+            generateRoute();
+
+            //initial infected person
+            Random rnd = new Random();
+            int num = rnd.Next(0, people.Count());
+            Person q = people[num];
+            q.status = "Red";
+            people[num] = q;
+
+            //draw the map
+            Render();
+        }
+
+        private void Pandemic_Click(object sender, EventArgs e)
+        {
+            //call pandemic
+            maskUpDown.Enabled = false;
+            vaccineUpDown.Enabled = false;
+            distanceUpDown.Enabled = false;
+            Pandemic.Enabled = false;
+        }
+
         private void Start_Click(object sender, EventArgs e)
         {
+            //start simulation
             timer1.Start();
             infectionUpDown.Enabled = false;
             daysUpDown.Enabled = false;
             latencyUpDown.Enabled = false;
             asymptomaticUpDown.Enabled = false;
-            //maskUpDown.Enabled = false;
-            //vaccineUpDown.Enabled = false;
-            //distanceUpDown.Enabled = false;
+            Stop.Enabled = true;
+            Start.Enabled = false;
 
         }
 
         private void Stop_Click(object sender, EventArgs e)
         {
+            //pause simulation
             timer1.Stop();
+            Start.Enabled = true;
+            Stop.Enabled = false;
         }
 
         private int FindClosest(float x, float y, List<Route> route)
@@ -362,7 +449,7 @@ namespace Simulation
                     if(prob <= inf)
                     {
                         Person r = people[j];
-                        r.status = "Red";
+                        r.status = "Pink";
                         people[j] = r;
                     }
 
@@ -393,14 +480,26 @@ namespace Simulation
             {
                 Person i = people[j];
 
-                if(i.status == "Red" || i.status == "Pink")
+                if(i.status == "Red" || i.status == "Pink" || i.status == "Violet")
                 {
                     infected++;
                     i.infected++;
                     spreadInfection(j);
                 }
 
-                if (i.infected == day * days)
+                if(i.infected == day * latency && i.status == "Pink")
+                {
+                    //check if asymptomatic
+                    Random rnd = new Random();
+                    int prob = rnd.Next(0, 10000);
+                    int inf = (int)(asymp * 100);
+                    if (prob <= inf)
+                        i.status = "Violet";
+                    else
+                        i.status = "Red";
+                }
+
+                if (i.infected == day * (days+latency))
                     i.status = "Gray";
 
                 if (i.status == "Blue")
@@ -506,10 +605,9 @@ namespace Simulation
             }
             Render();
 
-            if (ticks == day)
+            if (ticks % day == 0)
             {
                 generateRoute();
-                ticks = 0;
                 double valueR = infected / (prevI * ((double)susceptible/people.Count));
                 prevI = infected;
                 label2.Text = valueR.ToString("#.###");

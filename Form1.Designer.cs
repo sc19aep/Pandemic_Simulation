@@ -52,6 +52,10 @@ namespace Simulation
             this.vaccineUpDown = new System.Windows.Forms.NumericUpDown();
             this.label11 = new System.Windows.Forms.Label();
             this.distanceUpDown = new System.Windows.Forms.NumericUpDown();
+            this.Lockdown = new System.Windows.Forms.Button();
+            this.Freedom = new System.Windows.Forms.Button();
+            this.Restart = new System.Windows.Forms.Button();
+            this.Pandemic = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.latencyUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.daysUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.maskUpDown)).BeginInit();
@@ -212,6 +216,7 @@ namespace Simulation
             // 
             // Stop
             // 
+            this.Stop.Enabled = false;
             this.Stop.Location = new System.Drawing.Point(112, 460);
             this.Stop.Name = "Stop";
             this.Stop.Size = new System.Drawing.Size(98, 38);
@@ -318,12 +323,57 @@ namespace Simulation
             0});
             this.distanceUpDown.ValueChanged += new System.EventHandler(this.distanceUpDown_ValueChanged);
             // 
+            // Lockdown
+            // 
+            this.Lockdown.Location = new System.Drawing.Point(336, 461);
+            this.Lockdown.Name = "Lockdown";
+            this.Lockdown.Size = new System.Drawing.Size(121, 38);
+            this.Lockdown.TabIndex = 22;
+            this.Lockdown.Text = "Start Lockdown\r\n";
+            this.Lockdown.UseVisualStyleBackColor = true;
+            this.Lockdown.Click += new System.EventHandler(this.Lockdown_Click);
+            // 
+            // Freedom
+            // 
+            this.Freedom.Enabled = false;
+            this.Freedom.Location = new System.Drawing.Point(463, 461);
+            this.Freedom.Name = "Freedom";
+            this.Freedom.Size = new System.Drawing.Size(115, 38);
+            this.Freedom.TabIndex = 23;
+            this.Freedom.Text = "End Lockdown";
+            this.Freedom.UseVisualStyleBackColor = true;
+            this.Freedom.Click += new System.EventHandler(this.Freedom_Click);
+            // 
+            // Restart
+            // 
+            this.Restart.Location = new System.Drawing.Point(584, 461);
+            this.Restart.Name = "Restart";
+            this.Restart.Size = new System.Drawing.Size(104, 37);
+            this.Restart.TabIndex = 24;
+            this.Restart.Text = "Restart";
+            this.Restart.UseVisualStyleBackColor = true;
+            this.Restart.Click += new System.EventHandler(this.Restart_Click);
+            // 
+            // Pandemic
+            // 
+            this.Pandemic.Location = new System.Drawing.Point(216, 461);
+            this.Pandemic.Name = "Pandemic";
+            this.Pandemic.Size = new System.Drawing.Size(114, 37);
+            this.Pandemic.TabIndex = 25;
+            this.Pandemic.Text = "Call Pandemic";
+            this.Pandemic.UseVisualStyleBackColor = true;
+            this.Pandemic.Click += new System.EventHandler(this.Pandemic_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
             this.ClientSize = new System.Drawing.Size(913, 510);
+            this.Controls.Add(this.Pandemic);
+            this.Controls.Add(this.Restart);
+            this.Controls.Add(this.Freedom);
+            this.Controls.Add(this.Lockdown);
             this.Controls.Add(this.distanceUpDown);
             this.Controls.Add(this.label11);
             this.Controls.Add(this.vaccineUpDown);
@@ -385,6 +435,10 @@ namespace Simulation
         private System.Windows.Forms.NumericUpDown vaccineUpDown;
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.NumericUpDown distanceUpDown;
+        private System.Windows.Forms.Button Lockdown;
+        private System.Windows.Forms.Button Freedom;
+        private System.Windows.Forms.Button Restart;
+        private System.Windows.Forms.Button Pandemic;
     }
 }
 

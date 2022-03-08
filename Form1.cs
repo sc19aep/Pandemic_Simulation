@@ -414,33 +414,6 @@ namespace Simulation
             Pandemic.Enabled = false;
             Lockdown.Enabled = true;
             pandemic = true;
-
-
-            // THIS DOESN"T WORK, REDOOOO
-
-            //// people start wearing masks
-            //Random rnd = new Random();
-            //int maskPercentage = (int)((maskUptake / 100.0) * people.Count());
-            //var masks = people.OrderBy(x => rnd.Next()).Take(maskPercentage).ToList();
-
-            //for (int i = 0; i < masks.Count(); i++)
-            //{
-            //    int j = people.IndexOf(masks[i]);
-            //    Person p = masks[i];
-            //    p.mask = true;
-            //    people[i] = p;
-            //}
-
-            //// people start keeping a distance
-            //int distancePercentage = (int)((distanceUptake / 100.0) * people.Count());
-            //var distance = people.OrderBy(x => rnd.Next()).Take(distancePercentage).ToList();
-            //for (int i = 0; i < distance.Count(); i++)
-            //{
-            //    int j = people.IndexOf(distance[i]);
-            //    Person p = distance[i];
-            //    p.distance = true;
-            //    people[i] = p;
-            //}
         }
 
 
@@ -456,7 +429,7 @@ namespace Simulation
             ImmunityUpDown.Enabled = false;
             Stop.Enabled = true;
             Start.Enabled = false;
-            Pandemic.Enabled = false;
+            Pandemic.Enabled = true;
             Lockdown.Enabled = true;
 
         }
@@ -521,6 +494,31 @@ namespace Simulation
             
         }
 
+        private void enablePandemic()
+        {
+            //only enable once
+            pandemic = false;
+
+            // people start wearing masks
+            // people start keeping a distance
+            Random maskRnd = new Random();
+            Random distRnd = new Random();
+
+            for(int i = 0; i < people.Count(); i++)
+            {
+                Person p = people[i];
+                int mask = maskRnd.Next(0, 100);
+                int dist = distRnd.Next(0, 100);
+
+                if (mask <= maskUptake)
+                    p.mask = true;
+                if (dist <= distanceUptake)
+                    p.distance = true;
+
+                people[i] = p;
+
+            }
+        }
 
 
         private void timer1_Tick(object sender, EventArgs e)
@@ -528,6 +526,9 @@ namespace Simulation
             ticks++;
             int infected = 0;
             int susceptible = 0;
+
+            if(pandemic == true)
+                enablePandemic();
 
             //find nearest route point
             //follow neighbour route points to the location

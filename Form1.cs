@@ -22,6 +22,8 @@ namespace Simulation
             public Route current; //current point the person is on or heading to
             public int shopping; //checks if person is in a shop and how long they have been there already
             public int infected; //counts how long the person has been infected, to know when they are no longer ill
+            public bool mask;
+            public bool distance;
         };
 
         struct Building
@@ -38,7 +40,7 @@ namespace Simulation
         };
 
 
-        Person p1, p2, p3, p4;
+        Person p1;
         Building s1, h1; //shop 1 and house 1
         Route r1, r0; //route point
 
@@ -53,6 +55,8 @@ namespace Simulation
         int latency = 0;
         int immune = 4; //length of removed status
         int prevI = 1;
+        bool pandemic = false;
+        bool lockdown = false;
 
 
         List<Building> houses = new List<Building> {};
@@ -77,37 +81,19 @@ namespace Simulation
             p1.current = r0;
             p1.shopping = 0;
             p1.infected = 0;
+            p1.mask = false;
+            p1.distance = false;
             people.Add(p1);
             //person 2
-            p2.x = x + 10;
-            p2.y = y;
-            p2.status = "Blue";
-            p2.tasks = new List<Building> { };
-            p2.house = h1;
-            p2.current = r0;
-            p2.shopping = 0;
-            p2.infected = 0;
-            people.Add(p2);
+            p1.x = x + 10;
+            people.Add(p1);
             //person 3
-            p3.x = x;
-            p3.y = y + 10;
-            p3.status = "Blue";
-            p3.tasks = new List<Building> { };
-            p3.house = h1;
-            p3.current = r0;
-            p3.shopping = 0;
-            p3.infected = 0;
-            people.Add(p3);
+            p1.x = x;
+            p1.y = y + 10;
+            people.Add(p1);
             //person 4
-            p4.x = x + 10;
-            p4.y = y + 10;
-            p4.status = "Blue";
-            p4.tasks = new List<Building> { };
-            p4.house = h1;
-            p4.current = r0;
-            p4.shopping = 0;
-            p4.infected = 0;
-            people.Add(p4);
+            p1.x = x + 10;
+            people.Add(p1);
         }
 
         private void generateMap()
@@ -314,6 +300,7 @@ namespace Simulation
             //start lockdown
             Lockdown.Enabled = false;
             Freedom.Enabled = true;
+            lockdown = true;
         }
 
         private void Freedom_Click(object sender, EventArgs e)
@@ -321,6 +308,7 @@ namespace Simulation
             //end lockdown
             Freedom.Enabled = false;
             Lockdown.Enabled = true;
+            lockdown = false;
             
         }
 
@@ -342,6 +330,8 @@ namespace Simulation
             Stop.Enabled = false;
             Lockdown.Enabled = false;
             Freedom.Enabled = false;
+            pandemic = false;
+            lockdown = false;
 
 
             //reset people location to house
@@ -365,6 +355,8 @@ namespace Simulation
                 p.current = r0;
                 p.shopping = 0;
                 p.infected = 0;
+                p.mask = false;
+                p.distance = false;
 
                 p.tasks.RemoveRange(0, p.tasks.Count());
 
@@ -393,7 +385,31 @@ namespace Simulation
             distanceUpDown.Enabled = false;
             Pandemic.Enabled = false;
             Lockdown.Enabled = true;
+            pandemic = true;
 
+            // people start wearing masks
+            Random rnd = new Random();
+            int maskPercentage = (int)((maskUptake / 100.0) * people.Count());
+            var masks = people.OrderBy(x => rnd.Next()).Take(maskPercentage).ToList();
+
+            for(int i = 0; i<masks.Count(); i++)
+            {
+                int j = people.IndexOf(masks[i]);
+                Person p = masks[i];
+                p.mask = true;
+                people[i] = p;
+            }
+
+            // people start keeping a distance
+            int distancePercentage = (int)((distanceUptake / 100.0) * people.Count());
+            var distance = people.OrderBy(x => rnd.Next()).Take(distancePercentage).ToList();
+            for(int i = 0; i<distance.Count(); i++)
+            {
+                int j = people.IndexOf(distance[i]);
+                Person p = distance[i];
+                p.distance = true;
+                people[i] = p;
+            }
 
         }
 

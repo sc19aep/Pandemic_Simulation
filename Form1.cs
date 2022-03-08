@@ -22,8 +22,8 @@ namespace Simulation
             public Route current; //current point the person is on or heading to
             public int shopping; //checks if person is in a shop and how long they have been there already
             public int infected; //counts how long the person has been infected, to know when they are no longer ill
-            public bool mask;
-            public bool distance;
+            public bool mask; //is the person wearing a mask
+            public bool distance; //is the person trying to keep a distance from others
         };
 
         struct Building
@@ -40,7 +40,7 @@ namespace Simulation
         };
 
 
-        Person p1;
+        Person p1, p2, p3, p4;
         Building s1, h1; //shop 1 and house 1
         Route r1, r0; //route point
 
@@ -57,6 +57,7 @@ namespace Simulation
         int prevI = 1;
         bool pandemic = false;
         bool lockdown = false;
+        bool paused = true;
 
 
         List<Building> houses = new List<Building> {};
@@ -85,15 +86,41 @@ namespace Simulation
             p1.distance = false;
             people.Add(p1);
             //person 2
-            p1.x = x + 10;
-            people.Add(p1);
+            p2.x = x + 10;
+            p2.y = y;
+            p2.status = "Blue";
+            p2.tasks = new List<Building> { };
+            p2.house = h1;
+            p2.current = r0;
+            p2.shopping = 0;
+            p2.infected = 0;
+            p2.mask = false;
+            p2.distance = false;
+            people.Add(p2);
             //person 3
-            p1.x = x;
-            p1.y = y + 10;
-            people.Add(p1);
+            p3.x = x;
+            p3.y = y + 10;
+            p3.status = "Blue";
+            p3.tasks = new List<Building> { };
+            p3.house = h1;
+            p3.current = r0;
+            p3.shopping = 0;
+            p3.infected = 0;
+            p3.mask = false;
+            p3.distance = false;
+            people.Add(p3);
             //person 4
-            p1.x = x + 10;
-            people.Add(p1);
+            p4.x = x + 10;
+            p4.y = y + 10;
+            p4.status = "Blue";
+            p4.tasks = new List<Building> { };
+            p4.house = h1;
+            p4.current = r0;
+            p4.shopping = 0;
+            p4.infected = 0;
+            p4.mask = false;
+            p4.distance = false;
+            people.Add(p4);
         }
 
         private void generateMap()
@@ -297,6 +324,7 @@ namespace Simulation
 
         private void Lockdown_Click(object sender, EventArgs e)
         {
+
             //start lockdown
             Lockdown.Enabled = false;
             Freedom.Enabled = true;
@@ -334,7 +362,7 @@ namespace Simulation
             lockdown = false;
 
 
-            //reset people location to house
+            //reset people
             for (int i=0; i<people.Count(); i++)
             {
                 Person p = people[i];
@@ -387,30 +415,32 @@ namespace Simulation
             Lockdown.Enabled = true;
             pandemic = true;
 
-            // people start wearing masks
-            Random rnd = new Random();
-            int maskPercentage = (int)((maskUptake / 100.0) * people.Count());
-            var masks = people.OrderBy(x => rnd.Next()).Take(maskPercentage).ToList();
 
-            for(int i = 0; i<masks.Count(); i++)
-            {
-                int j = people.IndexOf(masks[i]);
-                Person p = masks[i];
-                p.mask = true;
-                people[i] = p;
-            }
+            // THIS DOESN"T WORK, REDOOOO
 
-            // people start keeping a distance
-            int distancePercentage = (int)((distanceUptake / 100.0) * people.Count());
-            var distance = people.OrderBy(x => rnd.Next()).Take(distancePercentage).ToList();
-            for(int i = 0; i<distance.Count(); i++)
-            {
-                int j = people.IndexOf(distance[i]);
-                Person p = distance[i];
-                p.distance = true;
-                people[i] = p;
-            }
+            //// people start wearing masks
+            //Random rnd = new Random();
+            //int maskPercentage = (int)((maskUptake / 100.0) * people.Count());
+            //var masks = people.OrderBy(x => rnd.Next()).Take(maskPercentage).ToList();
 
+            //for (int i = 0; i < masks.Count(); i++)
+            //{
+            //    int j = people.IndexOf(masks[i]);
+            //    Person p = masks[i];
+            //    p.mask = true;
+            //    people[i] = p;
+            //}
+
+            //// people start keeping a distance
+            //int distancePercentage = (int)((distanceUptake / 100.0) * people.Count());
+            //var distance = people.OrderBy(x => rnd.Next()).Take(distancePercentage).ToList();
+            //for (int i = 0; i < distance.Count(); i++)
+            //{
+            //    int j = people.IndexOf(distance[i]);
+            //    Person p = distance[i];
+            //    p.distance = true;
+            //    people[i] = p;
+            //}
         }
 
 
@@ -426,6 +456,8 @@ namespace Simulation
             ImmunityUpDown.Enabled = false;
             Stop.Enabled = true;
             Start.Enabled = false;
+            Pandemic.Enabled = false;
+            Lockdown.Enabled = true;
 
         }
 
@@ -435,6 +467,7 @@ namespace Simulation
             timer1.Stop();
             Start.Enabled = true;
             Stop.Enabled = false;
+            Pandemic.Enabled = true;
         }
 
         private int FindClosest(float x, float y, List<Route> route)
@@ -542,7 +575,7 @@ namespace Simulation
                     
 
                 float target_x, target_y;
-                if(i.tasks.Count > 0)
+                if(i.tasks.Count() > 0)
                 {
                     //check if there are any tasks left
                     target_x = i.tasks[0].x;
@@ -565,7 +598,7 @@ namespace Simulation
                     }
                     else if (i.current.x == i.x && i.current.y == i.y)
                     {
-                        if(i.tasks.Count > 0)
+                        if(i.tasks.Count() > 0)
                         {
                             //find neighbour closest to the target
                             int indx = FindClosest(target_x + 31.5f, target_y + 25, i.current.neighbours);
@@ -640,8 +673,9 @@ namespace Simulation
             }
             Render();
 
-            if (ticks % day == 0)
+            if (ticks == day)
             {
+                ticks = 0;
                 generateRoute();
                 double valueR = infected / (prevI * ((double)susceptible/people.Count));
                 prevI = infected;

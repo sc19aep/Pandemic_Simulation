@@ -547,13 +547,6 @@ namespace Simulation
             {
                 Person i = people[j];
 
-                if(i.status == "Red" || i.status == "Pink" || i.status == "Violet")
-                {
-                    infected++;
-                    i.infected++;
-                    spreadInfection(j);
-                }
-
                 if(i.status == "Pink" && i.infected == day * latency)
                 {
                     //check if asymptomatic
@@ -577,7 +570,14 @@ namespace Simulation
 
                 if (i.status == "Blue")
                     susceptible++;
-                    
+
+                if ((i.status == "Red" || i.status == "Pink" || i.status == "Violet") && susceptible != 0)
+                {
+                    infected++;
+                    i.infected++;
+                    spreadInfection(j);
+                }
+
 
                 float target_x, target_y;
                 if(i.tasks.Count() > 0)

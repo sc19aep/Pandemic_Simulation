@@ -168,26 +168,20 @@ namespace Simulation
             // 
             // infectionUpDown
             // 
-            this.infectionUpDown.DecimalPlaces = 2;
-            this.infectionUpDown.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            131072});
             this.infectionUpDown.Location = new System.Drawing.Point(172, 37);
             this.infectionUpDown.Minimum = new decimal(new int[] {
             1,
             0,
             0,
-            131072});
+            0});
             this.infectionUpDown.Name = "infectionUpDown";
             this.infectionUpDown.Size = new System.Drawing.Size(81, 27);
             this.infectionUpDown.TabIndex = 7;
             this.infectionUpDown.Value = new decimal(new int[] {
-            10,
+            50,
             0,
             0,
-            131072});
+            0});
             this.infectionUpDown.ValueChanged += new System.EventHandler(this.numericUpDown1_ValueChanged);
             // 
             // label3

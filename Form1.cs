@@ -45,7 +45,7 @@ namespace Simulation
         Route r1, r0; //route point
 
         int ticks = 0;
-        decimal infectionPercentage = 0.10M;
+        int infectionPercentage = 50;
         decimal asymp = 0.01M;
         int maskUptake = 50;
         int vaccineUptake = 50;
@@ -284,7 +284,7 @@ namespace Simulation
 
         private void numericUpDown1_ValueChanged(object sender, EventArgs e)
         {
-            infectionPercentage = infectionUpDown.Value;
+            infectionPercentage = (int)infectionUpDown.Value;
         }
 
         private void numericUpDown2_ValueChanged(object sender, EventArgs e)
@@ -429,7 +429,6 @@ namespace Simulation
             ImmunityUpDown.Enabled = false;
             Stop.Enabled = true;
             Start.Enabled = false;
-            Pandemic.Enabled = true;
             Lockdown.Enabled = true;
 
         }
@@ -466,33 +465,64 @@ namespace Simulation
         private void spreadInfection(int i)
         {
             Person p = people[i];
+            Random rnd = new Random();
 
             //check for nearby people
-            for(int j = 0; j < people.Count(); j++)
+            for (int j = 0; j < people.Count(); j++)
             {
-                //persons middle point
-                int px = people[j].x + 5;
-                int py = people[j].y + 5;
-
-
-                //need to change infection chance based on distance and if either person is wearing a mask
-                //the mask thing only needs checked if pandemic==2
-
-                //check if within 5 pixel vicinity and if in the same building/outside
-                if(px > p.x-5 && px < p.x+5 && py > p.y-5 && py < p.y+5 && people[j].shopping==p.shopping && people[j].status =="Blue")
+                // try to infect only if the other person is susceptible
+                // try to infect only if both people are in the same room
+                if (people[j].status == "Blue" && people[j].shopping == p.shopping)
                 {
-                    //infect neraby people
-                    Random rnd = new Random();
+                    Person q = people[j];
+                    float inf = infectionPercentage * 100;
+
+                    //get the random chance number
                     int prob = rnd.Next(0, 10000);
-                    int inf = (int)(infectionPercentage * 100);
-                    if(prob <= inf)
+
+                    if (p.shopping == 0)
+                        inf = inf * 0.5f;
+
+                    //if within 3 pixel vicinity, then the transmission probability is as chosen
+                    if (q.x > p.x - 3 && q.x < p.x + 3 && q.y > p.y - 3 && q.y < p.y + 3)
+                    {
+                        if(pandemic == 2)
+                        {
+                            if (p.mask == false && q.mask == true)
+                                inf = inf * 0.70f;
+                            else if (p.mask == true && q.mask == false)
+                                inf = inf * 0.05f;
+                            else if (p.mask == true && q.mask == true)
+                                inf = inf * 0.02f;
+                        }
+                        //else if no one has a mask, inf stays the same
+                    }
+                    // if within 6 pixels, then there is a good distance
+                    else if (q.x > p.x - 6 && q.x < p.x + 6 && q.y > p.y - 6 && q.y < p.y + 6)
+                    {
+                        if (pandemic == 2)
+                        {
+                            if (p.mask == false && q.mask == true)
+                                inf = inf * 0.35f;
+                            else if (p.mask == true && q.mask == false)
+                                inf = inf * 0.02f;
+                            else if (p.mask == true && q.mask == true)
+                                inf = inf * 0.01f;
+                        }
+                        else
+                            inf = inf * 0.5f;
+                    }
+                    else
+                        continue;
+
+                    if (prob <= (int)inf)
                     {
                         Person r = people[j];
                         r.status = "Pink";
                         people[j] = r;
                     }
 
-                }
+                } 
             }
 
             

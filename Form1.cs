@@ -55,7 +55,7 @@ namespace Simulation
         int latency = 0;
         int immune = 4; //length of removed status
         int prevI = 1;
-        bool pandemic = false;
+        int pandemic = 0;
         bool lockdown = false;
         bool paused = true;
 
@@ -358,7 +358,7 @@ namespace Simulation
             Stop.Enabled = false;
             Lockdown.Enabled = false;
             Freedom.Enabled = false;
-            pandemic = false;
+            pandemic = 0;
             lockdown = false;
 
 
@@ -413,7 +413,7 @@ namespace Simulation
             distanceUpDown.Enabled = false;
             Pandemic.Enabled = false;
             Lockdown.Enabled = true;
-            pandemic = true;
+            pandemic = 1;
         }
 
 
@@ -474,6 +474,10 @@ namespace Simulation
                 int px = people[j].x + 5;
                 int py = people[j].y + 5;
 
+
+                //need to change infection chance based on distance and if either person is wearing a mask
+                //the mask thing only needs checked if pandemic==2
+
                 //check if within 5 pixel vicinity and if in the same building/outside
                 if(px > p.x-5 && px < p.x+5 && py > p.y-5 && py < p.y+5 && people[j].shopping==p.shopping && people[j].status =="Blue")
                 {
@@ -497,7 +501,7 @@ namespace Simulation
         private void enablePandemic()
         {
             //only enable once
-            pandemic = false;
+            pandemic = 2;
 
             // people start wearing masks
             // people start keeping a distance
@@ -527,7 +531,7 @@ namespace Simulation
             int infected = 0;
             int susceptible = 0;
 
-            if(pandemic == true)
+            if(pandemic == 1)
                 enablePandemic();
 
             //find nearest route point
@@ -659,6 +663,9 @@ namespace Simulation
                 }
                 target_x = i.current.x;
                 target_y = i.current.y;
+
+                //if pandemic == 2, need to check if the person wants to keep a distance
+                // if yes, the person will only move in that directio if won't distrube the distance
 
 
                 if (i.x < target_x )//+35

@@ -275,7 +275,7 @@ namespace Simulation
             Random rnd = new Random();
             int num = rnd.Next(0, people.Count());
             Person p = people[num];
-            p.status = "Red";
+            p.status = "Violet";
             people[num] = p;
 
             //draw the map
@@ -398,7 +398,7 @@ namespace Simulation
             Random rnd = new Random();
             int num = rnd.Next(0, people.Count());
             Person q = people[num];
-            q.status = "Red";
+            q.status = "Violet";
             people[num] = q;
 
             //draw the map
@@ -577,7 +577,8 @@ namespace Simulation
             {
                 Person i = people[j];
 
-                if(i.status == "Pink" && i.infected == day * latency)
+                // become asymptomatic or show symptoms
+                if(i.status == "Pink" && i.infected >= day * latency)
                 {
                     //check if asymptomatic
                     Random rnd = new Random();
@@ -589,26 +590,34 @@ namespace Simulation
                         i.status = "Red";
                 }
 
+                // end of infectious period, become removed
                 if (i.infected == day * (days+latency))
                     i.status = "Gray";
 
+                if (i.status == "Gray")
+                    i.infected++;
+
+                // end of immunity period, become susceptible
                 if(i.status == "Gray" && i.infected == day * (days+latency+immune))
                 {
                     i.status = "Blue";
                     i.infected = 0;
                 }
 
+                // count susceptible people
                 if (i.status == "Blue")
                     susceptible++;
 
-                if ((i.status == "Red" || i.status == "Pink" || i.status == "Violet") && susceptible != 0)
+                // if infectious, spread disease
+                if (i.status == "Red" || i.status == "Pink" || i.status == "Violet")
                 {
                     infected++;
                     i.infected++;
-                    spreadInfection(j);
+                    if(susceptible != 0)
+                        spreadInfection(j);
                 }
 
-
+                // assign target location to move towards
                 float target_x, target_y;
                 if(i.tasks.Count() > 0)
                 {
@@ -621,6 +630,15 @@ namespace Simulation
                     //if tasks finished go home
                     target_x = i.house.x;
                     target_y = i.house.y;
+                }
+
+                if(i.status == "Red"  && target_x != i.house.x)
+                {
+                    target_x = i.house.x;
+                    target_y = i.house.y;
+                    //i.tasks.RemoveAt(0);
+                    i.shopping = 299;
+
                 }
 
                 if(i.shopping == 0)
@@ -695,8 +713,20 @@ namespace Simulation
                 target_y = i.current.y;
 
                 //if pandemic == 2, need to check if the person wants to keep a distance
-                // if yes, the person will only move in that directio if won't distrube the distance
+                // if yes, the person will only move in that direction if won't disturbe the distance
 
+                if(pandemic == 2 && i.distance == true)
+                {
+                    //if not in the house
+                    if(i.x > i.house.x+10 || i.x < i.house.x || i.y < i.house.y || i.y > i.house.y+10)
+                    {
+                        // if someone is within 5 pixels don't move closer to them
+                        // might require adding a list that contains coordinates of all people...
+                    }
+
+                }
+                
+               
 
                 if (i.x < target_x )//+35
                     i.x++;

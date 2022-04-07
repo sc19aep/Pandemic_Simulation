@@ -24,6 +24,7 @@ namespace Simulation
             public int infected; //counts how long the person has been infected, to know when they are no longer ill
             public bool mask; //is the person wearing a mask
             public bool distance; //is the person trying to keep a distance from others
+            public int wait;
         };
 
         struct Building
@@ -84,6 +85,7 @@ namespace Simulation
             p1.infected = 0;
             p1.mask = false;
             p1.distance = false;
+            p1.wait = 0;
             people.Add(p1);
             //person 2
             p2.x = x + 10;
@@ -96,6 +98,7 @@ namespace Simulation
             p2.infected = 0;
             p2.mask = false;
             p2.distance = false;
+            p2.wait = 0;
             people.Add(p2);
             //person 3
             p3.x = x;
@@ -108,6 +111,7 @@ namespace Simulation
             p3.infected = 0;
             p3.mask = false;
             p3.distance = false;
+            p3.wait = 0;
             people.Add(p3);
             //person 4
             p4.x = x + 10;
@@ -120,6 +124,7 @@ namespace Simulation
             p4.infected = 0;
             p4.mask = false;
             p4.distance = false;
+            p4.wait = 0;
             people.Add(p4);
         }
 
@@ -172,6 +177,13 @@ namespace Simulation
             for (int i=0; i<people.Count(); i++)
             {
                 Person p = people[i];
+
+                if(pandemic > 0)
+                {
+                    int wait = rnd.Next(0, (int)day / 6);
+                    p.wait = wait;
+                }
+
                 p.current = r0;
                 p.shopping = 0;
                 for(int j = 0; j<3; j++)
@@ -632,7 +644,7 @@ namespace Simulation
                     target_y = i.house.y;
                 }
 
-                if(i.status == "Red"  && target_x != i.house.x)
+                if(i.status == "Red"  && target_x != i.house.x && pandemic==2)
                 {
                     target_x = i.house.x;
                     target_y = i.house.y;
@@ -649,7 +661,7 @@ namespace Simulation
                         int indx = FindClosest(i.x, i.y, points);
                         i.current = points[indx];
                     }
-                    else if (i.current.x == i.x && i.current.y == i.y)
+                    else if (i.x > i.current.x -5 && i.x < i.current.x +5 && i.y > i.current.y -5 && i.y < i.current.y +5)
                     {
                         if(i.tasks.Count() > 0)
                         {
@@ -679,7 +691,7 @@ namespace Simulation
                     {
                         //move into the shop and then move around there for a while
 
-                        if (i.x == i.current.x && i.y == i.current.y)
+                        if (i.x > i.current.x - 5 && i.x < i.current.x + 5 && i.y > i.current.y - 5 && i.y < i.current.y + 5)
                         {
                             Random rnd = new Random();
                             int num_x = rnd.Next(0, 66);
@@ -699,7 +711,7 @@ namespace Simulation
                     }
                     else
                     {
-                        if (i.x == i.current.x && i.y == i.current.y)
+                        if (i.x > i.current.x - 5 && i.x < i.current.x + 5 && i.y > i.current.y - 5 && i.y < i.current.y + 5)
                         {
                             Random rnd = new Random();
                             int num_x = rnd.Next(0, 16);
@@ -712,30 +724,101 @@ namespace Simulation
                 target_x = i.current.x;
                 target_y = i.current.y;
 
-                //if pandemic == 2, need to check if the person wants to keep a distance
-                // if yes, the person will only move in that direction if won't disturbe the distance
-
-                if(pandemic == 2 && i.distance == true)
+                // walk on different sides of the street 
+                if(i.shopping == 0)
                 {
-                    //if not in the house
-                    if(i.x > i.house.x+10 || i.x < i.house.x || i.y < i.house.y || i.y > i.house.y+10)
-                    {
-                        // if someone is within 5 pixels don't move closer to them
-                        // might require adding a list that contains coordinates of all people...
-                    }
-
+                    if (target_y > i.y) //moving down
+                        target_x = target_x + 4;
+                    else if (target_y < i.y) //moving up
+                        target_x = target_x - 4;
+                    else if (target_x > i.x) //moving right
+                        target_y = target_y - 4;
+                    else if (target_x < i.x) //moving left
+                        target_y = target_y + 4;
                 }
-                
-               
 
-                if (i.x < target_x )//+35
-                    i.x++;
-                else if (i.x > target_x)
-                    i.x--;
-                else if (i.y < target_y ) //+25
-                    i.y++;
-                else if (i.y > target_y )
-                    i.y--;
+
+                //move if social distancing is satisfied
+                if((i.x > i.house.x+10 || i.x < i.house.x || i.y < i.house.y || i.y > i.house.y+10) && (pandemic == 2 && i.distance == true) && (i.x > i.current.x - 5 && i.x < i.current.x + 5 && i.y > i.current.y - 5 && i.y < i.current.y + 5))
+                {
+                    int count = 0;
+
+                    if (i.x < target_x)
+                    {
+                        for (int k = 0; k < people.Count(); k++)
+                        {
+                            if (k == j)
+                                continue;
+                            if (people[k].x > i.x && people[k].x < i.x + 6 && people[k].y == i.y)
+                            {
+                                count++;
+                                break;
+                            }   
+                        }
+                        if(count == 0)
+                            i.x++;
+                    }        
+                    else if (i.x > target_x)
+                    {
+                        for (int k = 0; k < people.Count(); k++)
+                        {
+                            if (k == j)
+                                continue;
+                            if (people[k].x < i.x && people[k].x > i.x - 6 && people[k].y == i.y)
+                            {
+                                count++;
+                                break;
+                            }
+                        }
+                        if (count == 0)
+                            i.x--;
+                    }
+                    else if (i.y < target_y)
+                    {
+                        for (int k = 0; k < people.Count(); k++)
+                        {
+                            if (k == j)
+                                continue;
+                            if (people[k].y > i.y && people[k].y < i.y + 6 && people[k].x == i.x)
+                            {
+                                count++;
+                                break;
+                            }
+                        }
+                        if (count == 0)
+                            i.y++;
+                    }
+                    else if (i.y > target_y)
+                    {
+                        for (int k = 0; k < people.Count(); k++)
+                        {
+                            if (k == j)
+                                continue;
+                            if (people[k].y < i.y && people[k].y > i.y - 6 && people[k].x == i.x)
+                            {
+                                count++;
+                                break;
+                            }
+                        }
+                        if (count == 0)
+                            i.y--;
+                    }
+                }
+                else if(pandemic == 2 && i.wait > 0 && i.x > i.house.x && i.x < i.house.x+20 && i.y > i.house.y && i.y < i.house.y + 20)
+                {
+                    i.wait--;
+                }
+                else
+                {
+                    if (i.x < target_x)//+35
+                        i.x++;
+                    else if (i.x > target_x)
+                        i.x--;
+                    else if (i.y < target_y) //+25
+                        i.y++;
+                    else if (i.y > target_y)
+                        i.y--;
+                }
 
                 people[j] = i;
             }

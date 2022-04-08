@@ -24,6 +24,7 @@ namespace Simulation
             public int infected; //counts how long the person has been infected, to know when they are no longer ill
             public bool mask; //is the person wearing a mask
             public bool distance; //is the person trying to keep a distance from others
+            public bool vaccine; //is the person vaccinated
             public int wait;
         };
 
@@ -85,6 +86,7 @@ namespace Simulation
             p1.infected = 0;
             p1.mask = false;
             p1.distance = false;
+            p1.vaccine = false;
             p1.wait = 0;
             people.Add(p1);
             //person 2
@@ -98,6 +100,7 @@ namespace Simulation
             p2.infected = 0;
             p2.mask = false;
             p2.distance = false;
+            p2.vaccine = false;
             p2.wait = 0;
             people.Add(p2);
             //person 3
@@ -111,6 +114,7 @@ namespace Simulation
             p3.infected = 0;
             p3.mask = false;
             p3.distance = false;
+            p3.vaccine = false;
             p3.wait = 0;
             people.Add(p3);
             //person 4
@@ -124,6 +128,7 @@ namespace Simulation
             p4.infected = 0;
             p4.mask = false;
             p4.distance = false;
+            p4.vaccine = false;
             p4.wait = 0;
             people.Add(p4);
         }
@@ -397,6 +402,7 @@ namespace Simulation
                 p.infected = 0;
                 p.mask = false;
                 p.distance = false;
+                p.vaccine = false;
 
                 p.tasks.RemoveRange(0, p.tasks.Count());
 
@@ -506,6 +512,11 @@ namespace Simulation
                                 inf = inf * 0.05f;
                             else if (p.mask == true && q.mask == true)
                                 inf = inf * 0.02f;
+
+                            if (p.vaccine == true)
+                                inf = inf * 0.02f;
+                            if (q.vaccine == true)
+                                inf = inf * 0.01f;
                         }
                         //else if no one has a mask, inf stays the same
                     }
@@ -520,6 +531,11 @@ namespace Simulation
                                 inf = inf * 0.02f;
                             else if (p.mask == true && q.mask == true)
                                 inf = inf * 0.01f;
+
+                            if (p.vaccine == true)
+                                inf = inf * 0.01f;
+                            if (q.vaccine == true)
+                                inf = inf * 0.001f;
                         }
                         else
                             inf = inf * 0.5f;
@@ -564,7 +580,7 @@ namespace Simulation
                 if (dist <= distanceUptake)
                     p.distance = true;
                 if (vacc <= vaccineUptake)
-                    p.status = "Green";
+                    p.vaccine = true;
 
                 people[i] = p;
 

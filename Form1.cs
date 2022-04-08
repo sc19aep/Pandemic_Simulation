@@ -547,19 +547,24 @@ namespace Simulation
 
             // people start wearing masks
             // people start keeping a distance
+            // portion of the population is vaccinated - immune forever
             Random maskRnd = new Random();
             Random distRnd = new Random();
+            Random vacRnd = new Random();
 
             for(int i = 0; i < people.Count(); i++)
             {
                 Person p = people[i];
                 int mask = maskRnd.Next(0, 100);
                 int dist = distRnd.Next(0, 100);
+                int vacc = vacRnd.Next(0, 100);
 
                 if (mask <= maskUptake)
                     p.mask = true;
                 if (dist <= distanceUptake)
                     p.distance = true;
+                if (vacc <= vaccineUptake)
+                    p.status = "Green";
 
                 people[i] = p;
 
@@ -606,7 +611,7 @@ namespace Simulation
                 if (i.infected == day * (days+latency))
                     i.status = "Gray";
 
-                if (i.status == "Gray")
+                if (i.status == "Gray" || i.status == "Pink")
                     i.infected++;
 
                 // end of immunity period, become susceptible
@@ -621,7 +626,7 @@ namespace Simulation
                     susceptible++;
 
                 // if infectious, spread disease
-                if (i.status == "Red" || i.status == "Pink" || i.status == "Violet")
+                if (i.status == "Red" ||  i.status == "Violet")
                 {
                     infected++;
                     i.infected++;
@@ -648,7 +653,6 @@ namespace Simulation
                 {
                     target_x = i.house.x;
                     target_y = i.house.y;
-                    //i.tasks.RemoveAt(0);
                     i.shopping = 299;
 
                 }
@@ -661,7 +665,7 @@ namespace Simulation
                         int indx = FindClosest(i.x, i.y, points);
                         i.current = points[indx];
                     }
-                    else if (i.x > i.current.x -5 && i.x < i.current.x +5 && i.y > i.current.y -5 && i.y < i.current.y +5)
+                    else if (i.x == i.current.x && i.y == i.current.y)
                     {
                         if(i.tasks.Count() > 0)
                         {
@@ -691,7 +695,7 @@ namespace Simulation
                     {
                         //move into the shop and then move around there for a while
 
-                        if (i.x > i.current.x - 5 && i.x < i.current.x + 5 && i.y > i.current.y - 5 && i.y < i.current.y + 5)
+                        if (i.x == i.current.x && i.y == i.current.y)
                         {
                             Random rnd = new Random();
                             int num_x = rnd.Next(0, 66);
@@ -711,7 +715,7 @@ namespace Simulation
                     }
                     else
                     {
-                        if (i.x > i.current.x - 5 && i.x < i.current.x + 5 && i.y > i.current.y - 5 && i.y < i.current.y + 5)
+                        if (i.x == i.current.x && i.y == i.current.y)
                         {
                             Random rnd = new Random();
                             int num_x = rnd.Next(0, 16);
@@ -725,13 +729,13 @@ namespace Simulation
                 target_y = i.current.y;
 
                 // walk on different sides of the street 
-                if(i.shopping == 0)
+                if(i.shopping < 1 && (i.x < target_x - 8 || i.x > target_x + 8 || i.y < target_y - 8 || i.y > target_y + 8))
                 {
                     if (target_y > i.y) //moving down
                         target_x = target_x + 4;
                     else if (target_y < i.y) //moving up
                         target_x = target_x - 4;
-                    else if (target_x > i.x) //moving right
+                    if (target_x > i.x) //moving right
                         target_y = target_y - 4;
                     else if (target_x < i.x) //moving left
                         target_y = target_y + 4;
@@ -739,7 +743,22 @@ namespace Simulation
 
 
                 //move if social distancing is satisfied
-                if((i.x > i.house.x+10 || i.x < i.house.x || i.y < i.house.y || i.y > i.house.y+10) && (pandemic == 2 && i.distance == true) && (i.x > i.current.x - 5 && i.x < i.current.x + 5 && i.y > i.current.y - 5 && i.y < i.current.y + 5))
+                if (i.wait > 0 && i.x > i.house.x && i.x < i.house.x + 20 && i.y > i.house.y && i.y < i.house.y + 20)
+                {
+                    i.wait--;
+                }
+                else if (i.x > target_x - 8 && i.x < target_x + 8 && i.y > target_y - 8 && i.y < target_y + 8)
+                {
+                    if (i.x < target_x)//+35
+                        i.x++;
+                    else if (i.x > target_x)
+                        i.x--;
+                    if (i.y < target_y) //+25
+                        i.y++;
+                    else if (i.y > target_y)
+                        i.y--;
+                }
+                else if((i.x > i.house.x+20 || i.x < i.house.x || i.y < i.house.y || i.y > i.house.y+20) && (pandemic == 2 && i.distance == true))
                 {
                     int count = 0;
 
@@ -749,9 +768,11 @@ namespace Simulation
                         {
                             if (k == j)
                                 continue;
-                            if (people[k].x > i.x && people[k].x < i.x + 6 && people[k].y == i.y)
+                            if (people[k].shopping != i.shopping)
+                                continue;
+                            if (people[k].x > i.x && people[k].x < i.x + 5 && people[k].y == i.y)
                             {
-                                count++;
+                                count = 1;
                                 break;
                             }   
                         }
@@ -764,24 +785,29 @@ namespace Simulation
                         {
                             if (k == j)
                                 continue;
-                            if (people[k].x < i.x && people[k].x > i.x - 6 && people[k].y == i.y)
+                            if (people[k].shopping != i.shopping)
+                                continue;
+                            if (people[k].x < i.x && people[k].x > i.x - 5 && people[k].y == i.y)
                             {
-                                count++;
+                                count = 1;
                                 break;
                             }
                         }
                         if (count == 0)
                             i.x--;
                     }
-                    else if (i.y < target_y)
+                    count = 0;
+                    if (i.y < target_y)
                     {
                         for (int k = 0; k < people.Count(); k++)
                         {
                             if (k == j)
                                 continue;
-                            if (people[k].y > i.y && people[k].y < i.y + 6 && people[k].x == i.x)
+                            if (people[k].shopping != i.shopping)
+                                continue;
+                            if (people[k].y > i.y && people[k].y < i.y + 5 && people[k].x == i.x)
                             {
-                                count++;
+                                count = 1;
                                 break;
                             }
                         }
@@ -794,9 +820,11 @@ namespace Simulation
                         {
                             if (k == j)
                                 continue;
-                            if (people[k].y < i.y && people[k].y > i.y - 6 && people[k].x == i.x)
+                            if (people[k].shopping != i.shopping)
+                                continue;
+                            if (people[k].y < i.y && people[k].y > i.y - 5 && people[k].x == i.x)
                             {
-                                count++;
+                                count = 1;
                                 break;
                             }
                         }
@@ -804,17 +832,13 @@ namespace Simulation
                             i.y--;
                     }
                 }
-                else if(pandemic == 2 && i.wait > 0 && i.x > i.house.x && i.x < i.house.x+20 && i.y > i.house.y && i.y < i.house.y + 20)
-                {
-                    i.wait--;
-                }
                 else
                 {
                     if (i.x < target_x)//+35
                         i.x++;
                     else if (i.x > target_x)
                         i.x--;
-                    else if (i.y < target_y) //+25
+                    if (i.y < target_y) //+25
                         i.y++;
                     else if (i.y > target_y)
                         i.y--;

@@ -14,3 +14,5 @@ After a while of running the simulation, the user can decide to call a pandemic,
 The "End Lockdown" button means people will start going to stores the regular amount again. 
 
 The "Restart" button restarts the simulation letting the user change all settings and start again from the begining.
+
+Shopping: more than 0 - in shop, exactly zero - outdoors, less than zero - in house

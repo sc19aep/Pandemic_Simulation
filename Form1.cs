@@ -522,11 +522,12 @@ namespace Simulation
                                 inf = inf * 0.02f;
 
                             if (p.vaccine == true)
-                                inf = inf * 0.02f;
+                                inf = inf * 0.001f;
                             if (q.vaccine == true)
                                 inf = inf * 0.01f;
                         }
                         //else if no one has a mask, inf stays the same
+
                     }
                     // if within 6 pixels, then there is a good distance
                     else if (q.x > p.x - 6 && q.x < p.x + 6 && q.y > p.y - 6 && q.y < p.y + 6)
@@ -541,7 +542,7 @@ namespace Simulation
                                 inf = inf * 0.01f;
 
                             if (p.vaccine == true)
-                                inf = inf * 0.01f;
+                                inf = inf * 0.0001f;
                             if (q.vaccine == true)
                                 inf = inf * 0.001f;
                         }
@@ -550,6 +551,9 @@ namespace Simulation
                     }
                     else
                         continue;
+
+                    if (p.shopping == 0) //is outdoors
+                        inf = inf * 0.3f;
 
                     if (prob <= (int)inf)
                     {

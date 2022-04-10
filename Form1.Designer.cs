@@ -58,6 +58,8 @@ namespace Simulation
             this.Pandemic = new System.Windows.Forms.Button();
             this.label12 = new System.Windows.Forms.Label();
             this.ImmunityUpDown = new System.Windows.Forms.NumericUpDown();
+            this.label13 = new System.Windows.Forms.Label();
+            this.InfectedUpDown = new System.Windows.Forms.NumericUpDown();
             ((System.ComponentModel.ISupportInitialize)(this.latencyUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.daysUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.maskUpDown)).BeginInit();
@@ -67,6 +69,7 @@ namespace Simulation
             ((System.ComponentModel.ISupportInitialize)(this.vaccineUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.distanceUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ImmunityUpDown)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.InfectedUpDown)).BeginInit();
             this.SuspendLayout();
             // 
             // label8
@@ -146,7 +149,7 @@ namespace Simulation
             // 
             // maskUpDown
             // 
-            this.maskUpDown.Location = new System.Drawing.Point(190, 229);
+            this.maskUpDown.Location = new System.Drawing.Point(190, 258);
             this.maskUpDown.Name = "maskUpDown";
             this.maskUpDown.Size = new System.Drawing.Size(81, 27);
             this.maskUpDown.TabIndex = 9;
@@ -160,7 +163,7 @@ namespace Simulation
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(6, 234);
+            this.label4.Location = new System.Drawing.Point(6, 263);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(184, 20);
             this.label4.TabIndex = 8;
@@ -178,7 +181,7 @@ namespace Simulation
             this.infectionUpDown.Size = new System.Drawing.Size(81, 27);
             this.infectionUpDown.TabIndex = 7;
             this.infectionUpDown.Value = new decimal(new int[] {
-            50,
+            10,
             0,
             0,
             0});
@@ -196,7 +199,7 @@ namespace Simulation
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(56, 392);
+            this.label2.Location = new System.Drawing.Point(56, 433);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(17, 20);
             this.label2.TabIndex = 4;
@@ -205,7 +208,7 @@ namespace Simulation
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 392);
+            this.label1.Location = new System.Drawing.Point(12, 433);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(50, 20);
             this.label1.TabIndex = 3;
@@ -270,7 +273,7 @@ namespace Simulation
             this.label9.BackColor = System.Drawing.Color.LightGray;
             this.label9.FlatStyle = System.Windows.Forms.FlatStyle.System;
             this.label9.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.label9.Location = new System.Drawing.Point(6, 201);
+            this.label9.Location = new System.Drawing.Point(6, 230);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(208, 23);
             this.label9.TabIndex = 17;
@@ -279,7 +282,7 @@ namespace Simulation
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(7, 264);
+            this.label10.Location = new System.Drawing.Point(7, 293);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(207, 20);
             this.label10.TabIndex = 18;
@@ -287,7 +290,7 @@ namespace Simulation
             // 
             // vaccineUpDown
             // 
-            this.vaccineUpDown.Location = new System.Drawing.Point(213, 294);
+            this.vaccineUpDown.Location = new System.Drawing.Point(213, 323);
             this.vaccineUpDown.Name = "vaccineUpDown";
             this.vaccineUpDown.Size = new System.Drawing.Size(75, 27);
             this.vaccineUpDown.TabIndex = 19;
@@ -301,7 +304,7 @@ namespace Simulation
             // label11
             // 
             this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(7, 294);
+            this.label11.Location = new System.Drawing.Point(7, 323);
             this.label11.Name = "label11";
             this.label11.Size = new System.Drawing.Size(200, 20);
             this.label11.TabIndex = 20;
@@ -309,7 +312,7 @@ namespace Simulation
             // 
             // distanceUpDown
             // 
-            this.distanceUpDown.Location = new System.Drawing.Point(213, 262);
+            this.distanceUpDown.Location = new System.Drawing.Point(213, 291);
             this.distanceUpDown.Name = "distanceUpDown";
             this.distanceUpDown.Size = new System.Drawing.Size(78, 27);
             this.distanceUpDown.TabIndex = 21;
@@ -384,12 +387,41 @@ namespace Simulation
             0});
             this.ImmunityUpDown.ValueChanged += new System.EventHandler(this.ImmunityUpDown_ValueChanged);
             // 
+            // label13
+            // 
+            this.label13.AutoSize = true;
+            this.label13.Location = new System.Drawing.Point(7, 197);
+            this.label13.Name = "label13";
+            this.label13.Size = new System.Drawing.Size(152, 20);
+            this.label13.TabIndex = 28;
+            this.label13.Text = "- Number of infected:";
+            // 
+            // InfectedUpDown
+            // 
+            this.InfectedUpDown.Location = new System.Drawing.Point(166, 197);
+            this.InfectedUpDown.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.InfectedUpDown.Name = "InfectedUpDown";
+            this.InfectedUpDown.Size = new System.Drawing.Size(79, 27);
+            this.InfectedUpDown.TabIndex = 29;
+            this.InfectedUpDown.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.InfectedUpDown.ValueChanged += new System.EventHandler(this.InfectedUpDown_ValueChanged);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
             this.ClientSize = new System.Drawing.Size(913, 510);
+            this.Controls.Add(this.InfectedUpDown);
+            this.Controls.Add(this.label13);
             this.Controls.Add(this.ImmunityUpDown);
             this.Controls.Add(this.label12);
             this.Controls.Add(this.Pandemic);
@@ -429,6 +461,7 @@ namespace Simulation
             ((System.ComponentModel.ISupportInitialize)(this.vaccineUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.distanceUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ImmunityUpDown)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.InfectedUpDown)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -464,6 +497,8 @@ namespace Simulation
         private System.Windows.Forms.Button Pandemic;
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.NumericUpDown ImmunityUpDown;
+        private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.NumericUpDown InfectedUpDown;
     }
 }
 

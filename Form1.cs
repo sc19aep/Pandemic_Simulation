@@ -47,7 +47,7 @@ namespace Simulation
         Route r1, r0; //route point
 
         int ticks = 0;
-        int infectionPercentage = 50;
+        int infectionPercentage = 10;
         decimal asymp = 0.01M;
         int maskUptake = 50;
         int vaccineUptake = 50;
@@ -58,6 +58,8 @@ namespace Simulation
         int immune = 4; //length of removed status
         int prevI = 1;
         int pandemic = 0;
+        int numInfected = 1;
+        int restarted = 0;
         bool lockdown = false;
         bool paused = true;
 
@@ -288,13 +290,6 @@ namespace Simulation
             assignNeighbours();
             generateRoute();
 
-            //initial infected person
-            Random rnd = new Random();
-            int num = rnd.Next(0, people.Count());
-            Person p = people[num];
-            p.status = "Violet";
-            people[num] = p;
-
             //draw the map
             Render();
         }
@@ -339,6 +334,11 @@ namespace Simulation
             immune = (int)ImmunityUpDown.Value;
         }
 
+        private void InfectedUpDown_ValueChanged(object sender, EventArgs e)
+        {
+            numInfected = (int)InfectedUpDown.Value;
+        }
+
         private void Lockdown_Click(object sender, EventArgs e)
         {
 
@@ -367,6 +367,7 @@ namespace Simulation
             latencyUpDown.Enabled = true;
             asymptomaticUpDown.Enabled = true;
             ImmunityUpDown.Enabled = true;
+            InfectedUpDown.Enabled = true;
             maskUpDown.Enabled = true;
             vaccineUpDown.Enabled = true;
             distanceUpDown.Enabled = true;
@@ -377,6 +378,7 @@ namespace Simulation
             Freedom.Enabled = false;
             pandemic = 0;
             lockdown = false;
+            restarted = 0;
 
 
             //reset people
@@ -412,13 +414,6 @@ namespace Simulation
             //generate new tasks
             generateRoute();
 
-            //initial infected person
-            Random rnd = new Random();
-            int num = rnd.Next(0, people.Count());
-            Person q = people[num];
-            q.status = "Violet";
-            people[num] = q;
-
             //draw the map
             Render();
         }
@@ -445,9 +440,23 @@ namespace Simulation
             latencyUpDown.Enabled = false;
             asymptomaticUpDown.Enabled = false;
             ImmunityUpDown.Enabled = false;
+            InfectedUpDown.Enabled = false;
             Stop.Enabled = true;
             Start.Enabled = false;
             Lockdown.Enabled = true;
+
+            if(restarted == 0)
+            {
+                for (int i = 0; i < numInfected; i++)
+                {
+                    Random gen = new Random();
+                    int numgen = gen.Next(0, people.Count());
+                    Person q = people[numgen];
+                    q.status = "Violet";
+                    people[numgen] = q;
+                }
+                restarted = 1;
+            }
 
         }
 
@@ -457,7 +466,6 @@ namespace Simulation
             timer1.Stop();
             Start.Enabled = true;
             Stop.Enabled = false;
-            Pandemic.Enabled = true;
         }
 
         private int FindClosest(float x, float y, List<Route> route)

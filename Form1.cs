@@ -47,7 +47,7 @@ namespace Simulation
         Route r1, r0; //route point
 
         int ticks = 0;
-        int infectionPercentage, maskUptake, vaccineUptake, distanceUptake, prevI;
+        int infectionPercentage, maskUptake, vaccineUptake, distanceUptake, prevI, size;
         int day = 4000; //ticks in a day
         int days, asymp, latency, immune;
         int pandemic = 0, numInfected = 1, restarted = 0;
@@ -275,11 +275,6 @@ namespace Simulation
             r0.y = 0;
             r0.neighbours = new List<Route> { };
 
-            //houses, shops and people
-            generateMap();
-            assignNeighbours();
-            generateRoute();
-
             // variable initialization
             infectionPercentage = (int)infectionUpDown.Value;
             maskUptake = (int)maskUpDown.Value;
@@ -290,10 +285,6 @@ namespace Simulation
             latency = (int)latencyUpDown.Value; //length of being infected prior to being infectious
             immune = (int)ImmunityUpDown.Value; //length of removed status
             prevI = (int)InfectedUpDown.Value; //number of starting infected people, gets changed later to previous infected count
-
-
-            //draw the map
-            Render();
         }
 
         private void numericUpDown1_ValueChanged(object sender, EventArgs e)
@@ -378,43 +369,18 @@ namespace Simulation
             Stop.Enabled = false;
             Lockdown.Enabled = false;
             Freedom.Enabled = false;
+            small.Enabled = true;
+            medium.Enabled = true;
+            large.Enabled = true;
             pandemic = 0;
             lockdown = false;
             restarted = 0;
 
+            houses.Clear();
+            shops.Clear();
+            people.Clear();
+            points.Clear();
 
-            //reset people
-            for (int i=0; i<people.Count(); i++)
-            {
-                Person p = people[i];
-                p.x = p.house.x;
-                p.y = p.house.y;
-
-                if (i % 4 == 1)
-                    p.x += 10;
-                else if (i % 4 == 2)
-                    p.y += 10;
-                else if( i%4 == 3)
-                {
-                    p.x += 10;
-                    p.y += 10;
-                }
-
-                p.status = "Blue";
-                p.current = r0;
-                p.shopping = 0;
-                p.infected = 0;
-                p.mask = false;
-                p.distance = false;
-                p.vaccine = false;
-
-                p.tasks.RemoveRange(0, p.tasks.Count());
-
-                people[i] = p;
-            }
-
-            //generate new tasks
-            generateRoute();
 
             //draw the map
             Render();
@@ -446,9 +412,25 @@ namespace Simulation
             Stop.Enabled = true;
             Start.Enabled = false;
             Lockdown.Enabled = true;
+            small.Enabled = false;
+            medium.Enabled = false;
+            large.Enabled = false;
 
-            if(restarted == 0)
+            if (restarted == 0)
             {
+                if (small.Checked)
+                    size = 0;
+                else if (medium.Checked)
+                    size = 1;
+                else
+                    size = 2;
+
+                //houses, shops and people
+                generateMap();
+                assignNeighbours();
+                generateRoute();
+
+
                 for (int i = 0; i < numInfected; i++)
                 {
                     Random gen = new Random();
@@ -458,6 +440,9 @@ namespace Simulation
                     people[numgen] = q;
                 }
                 restarted = 1;
+
+                //draw
+                Render();
             }
 
         }

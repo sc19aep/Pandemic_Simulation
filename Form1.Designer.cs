@@ -60,6 +60,10 @@ namespace Simulation
             this.ImmunityUpDown = new System.Windows.Forms.NumericUpDown();
             this.label13 = new System.Windows.Forms.Label();
             this.InfectedUpDown = new System.Windows.Forms.NumericUpDown();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.large = new System.Windows.Forms.RadioButton();
+            this.medium = new System.Windows.Forms.RadioButton();
+            this.small = new System.Windows.Forms.RadioButton();
             ((System.ComponentModel.ISupportInitialize)(this.latencyUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.daysUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.maskUpDown)).BeginInit();
@@ -70,6 +74,7 @@ namespace Simulation
             ((System.ComponentModel.ISupportInitialize)(this.distanceUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ImmunityUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.InfectedUpDown)).BeginInit();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // label8
@@ -413,12 +418,58 @@ namespace Simulation
             0});
             this.InfectedUpDown.ValueChanged += new System.EventHandler(this.InfectedUpDown_ValueChanged);
             // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.small);
+            this.groupBox1.Controls.Add(this.large);
+            this.groupBox1.Controls.Add(this.medium);
+            this.groupBox1.Location = new System.Drawing.Point(7, 356);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(285, 49);
+            this.groupBox1.TabIndex = 30;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Population Size";
+            // 
+            // large
+            // 
+            this.large.AutoSize = true;
+            this.large.Location = new System.Drawing.Point(209, 23);
+            this.large.Name = "large";
+            this.large.Size = new System.Drawing.Size(64, 24);
+            this.large.TabIndex = 2;
+            this.large.Text = "large";
+            this.large.UseVisualStyleBackColor = true;
+            // 
+            // medium
+            // 
+            this.medium.AutoSize = true;
+            this.medium.Checked = true;
+            this.medium.Location = new System.Drawing.Point(98, 23);
+            this.medium.Name = "medium";
+            this.medium.Size = new System.Drawing.Size(85, 24);
+            this.medium.TabIndex = 1;
+            this.medium.TabStop = true;
+            this.medium.Text = "medium";
+            this.medium.UseVisualStyleBackColor = true;
+            // 
+            // small
+            // 
+            this.small.AutoSize = true;
+            this.small.Location = new System.Drawing.Point(6, 23);
+            this.small.Name = "small";
+            this.small.Size = new System.Drawing.Size(65, 24);
+            this.small.TabIndex = 3;
+            this.small.TabStop = true;
+            this.small.Text = "small";
+            this.small.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
             this.ClientSize = new System.Drawing.Size(915, 510);
+            this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.InfectedUpDown);
             this.Controls.Add(this.label13);
             this.Controls.Add(this.ImmunityUpDown);
@@ -461,6 +512,8 @@ namespace Simulation
             ((System.ComponentModel.ISupportInitialize)(this.distanceUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ImmunityUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.InfectedUpDown)).EndInit();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -498,6 +551,10 @@ namespace Simulation
         private System.Windows.Forms.NumericUpDown ImmunityUpDown;
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.NumericUpDown InfectedUpDown;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.RadioButton large;
+        private System.Windows.Forms.RadioButton medium;
+        private System.Windows.Forms.RadioButton small;
     }
 }
 

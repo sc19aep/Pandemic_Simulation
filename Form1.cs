@@ -42,7 +42,7 @@ namespace Simulation
         };
 
 
-        Person p1, p2, p3, p4;
+        Person p1, p2, p3, p4, p5, p6;
         Building s1, h1; //shop 1 and house 1
         Route r1, r0; //route point
 
@@ -95,34 +95,69 @@ namespace Simulation
             p2.vaccine = false;
             p2.wait = 0;
             people.Add(p2);
-            //person 3
-            p3.x = x;
-            p3.y = y + 10;
-            p3.status = "Blue";
-            p3.tasks = new List<Building> { };
-            p3.house = h1;
-            p3.current = r0;
-            p3.shopping = 0;
-            p3.infected = 0;
-            p3.mask = false;
-            p3.distance = false;
-            p3.vaccine = false;
-            p3.wait = 0;
-            people.Add(p3);
-            //person 4
-            p4.x = x + 10;
-            p4.y = y + 10;
-            p4.status = "Blue";
-            p4.tasks = new List<Building> { };
-            p4.house = h1;
-            p4.current = r0;
-            p4.shopping = 0;
-            p4.infected = 0;
-            p4.mask = false;
-            p4.distance = false;
-            p4.vaccine = false;
-            p4.wait = 0;
-            people.Add(p4);
+            if(size > 0)
+            {
+                //person 3
+                p3.x = x;
+                p3.y = y + 10;
+                p3.status = "Blue";
+                p3.tasks = new List<Building> { };
+                p3.house = h1;
+                p3.current = r0;
+                p3.shopping = 0;
+                p3.infected = 0;
+                p3.mask = false;
+                p3.distance = false;
+                p3.vaccine = false;
+                p3.wait = 0;
+                people.Add(p3);
+                //person 4
+                p4.x = x + 10;
+                p4.y = y + 10;
+                p4.status = "Blue";
+                p4.tasks = new List<Building> { };
+                p4.house = h1;
+                p4.current = r0;
+                p4.shopping = 0;
+                p4.infected = 0;
+                p4.mask = false;
+                p4.distance = false;
+                p4.vaccine = false;
+                p4.wait = 0;
+                people.Add(p4);
+            }
+            if(size == 2)
+            {
+                //person 5
+                p5.x = x;
+                p5.y = y + 5;
+                p5.status = "Blue";
+                p5.tasks = new List<Building> { };
+                p5.house = h1;
+                p5.current = r0;
+                p5.shopping = 0;
+                p5.infected = 0;
+                p5.mask = false;
+                p5.distance = false;
+                p5.vaccine = false;
+                p5.wait = 0;
+                people.Add(p5);
+                //person 6
+                p6.x = x + 5;
+                p6.y = y + 5;
+                p6.status = "Blue";
+                p6.tasks = new List<Building> { };
+                p6.house = h1;
+                p6.current = r0;
+                p6.shopping = 0;
+                p6.infected = 0;
+                p6.mask = false;
+                p6.distance = false;
+                p6.vaccine = false;
+                p6.wait = 0;
+                people.Add(p6);
+            }
+            
         }
 
         private void generateMap()

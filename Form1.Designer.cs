@@ -418,7 +418,7 @@ namespace Simulation
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
-            this.ClientSize = new System.Drawing.Size(913, 510);
+            this.ClientSize = new System.Drawing.Size(915, 510);
             this.Controls.Add(this.InfectedUpDown);
             this.Controls.Add(this.label13);
             this.Controls.Add(this.ImmunityUpDown);

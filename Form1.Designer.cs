@@ -61,9 +61,10 @@ namespace Simulation
             this.label13 = new System.Windows.Forms.Label();
             this.InfectedUpDown = new System.Windows.Forms.NumericUpDown();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.small = new System.Windows.Forms.RadioButton();
             this.large = new System.Windows.Forms.RadioButton();
             this.medium = new System.Windows.Forms.RadioButton();
-            this.small = new System.Windows.Forms.RadioButton();
+            this.cartesianChart1 = new LiveCharts.WinForms.CartesianChart();
             ((System.ComponentModel.ISupportInitialize)(this.latencyUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.daysUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.maskUpDown)).BeginInit();
@@ -430,6 +431,17 @@ namespace Simulation
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Population Size";
             // 
+            // small
+            // 
+            this.small.AutoSize = true;
+            this.small.Location = new System.Drawing.Point(6, 23);
+            this.small.Name = "small";
+            this.small.Size = new System.Drawing.Size(65, 24);
+            this.small.TabIndex = 3;
+            this.small.TabStop = true;
+            this.small.Text = "small";
+            this.small.UseVisualStyleBackColor = true;
+            // 
             // large
             // 
             this.large.AutoSize = true;
@@ -452,23 +464,21 @@ namespace Simulation
             this.medium.Text = "medium";
             this.medium.UseVisualStyleBackColor = true;
             // 
-            // small
+            // cartesianChart1
             // 
-            this.small.AutoSize = true;
-            this.small.Location = new System.Drawing.Point(6, 23);
-            this.small.Name = "small";
-            this.small.Size = new System.Drawing.Size(65, 24);
-            this.small.TabIndex = 3;
-            this.small.TabStop = true;
-            this.small.Text = "small";
-            this.small.UseVisualStyleBackColor = true;
+            this.cartesianChart1.Location = new System.Drawing.Point(907, 33);
+            this.cartesianChart1.Name = "cartesianChart1";
+            this.cartesianChart1.Size = new System.Drawing.Size(571, 345);
+            this.cartesianChart1.TabIndex = 31;
+            this.cartesianChart1.Text = "cartesianChart1";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
-            this.ClientSize = new System.Drawing.Size(915, 510);
+            this.ClientSize = new System.Drawing.Size(1480, 510);
+            this.Controls.Add(this.cartesianChart1);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.InfectedUpDown);
             this.Controls.Add(this.label13);
@@ -501,7 +511,6 @@ namespace Simulation
             this.Controls.Add(this.Start);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
             this.Name = "Form1";
-            this.Text = "Pandemic Simulation";
             ((System.ComponentModel.ISupportInitialize)(this.latencyUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.daysUpDown)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.maskUpDown)).EndInit();
@@ -555,6 +564,7 @@ namespace Simulation
         private System.Windows.Forms.RadioButton large;
         private System.Windows.Forms.RadioButton medium;
         private System.Windows.Forms.RadioButton small;
+        private LiveCharts.WinForms.CartesianChart cartesianChart1;
     }
 }
 

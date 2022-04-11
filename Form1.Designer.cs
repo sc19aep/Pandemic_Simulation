@@ -77,9 +77,9 @@ namespace Simulation
             this.label8.AutoSize = true;
             this.label8.Location = new System.Drawing.Point(7, 137);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(197, 20);
+            this.label8.Size = new System.Drawing.Size(210, 20);
             this.label8.TabIndex = 15;
-            this.label8.Text = "- Asymptomatic percentage:";
+            this.label8.Text = "- Asymptomatic period (days):";
             // 
             // latencyUpDown
             // 
@@ -92,6 +92,11 @@ namespace Simulation
             this.latencyUpDown.Name = "latencyUpDown";
             this.latencyUpDown.Size = new System.Drawing.Size(69, 27);
             this.latencyUpDown.TabIndex = 14;
+            this.latencyUpDown.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             this.latencyUpDown.ValueChanged += new System.EventHandler(this.latencyUpDown_ValueChanged);
             // 
             // label7
@@ -117,7 +122,7 @@ namespace Simulation
             // 
             // daysUpDown
             // 
-            this.daysUpDown.Location = new System.Drawing.Point(191, 104);
+            this.daysUpDown.Location = new System.Drawing.Point(213, 101);
             this.daysUpDown.Maximum = new decimal(new int[] {
             30,
             0,
@@ -143,9 +148,9 @@ namespace Simulation
             this.label5.AutoSize = true;
             this.label5.Location = new System.Drawing.Point(7, 106);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(178, 20);
+            this.label5.Size = new System.Drawing.Size(202, 20);
             this.label5.TabIndex = 10;
-            this.label5.Text = "- Infectious period (days):";
+            this.label5.Text = "- Symptomatic period (days):";
             // 
             // maskUpDown
             // 
@@ -250,13 +255,7 @@ namespace Simulation
             // 
             // asymptomaticUpDown
             // 
-            this.asymptomaticUpDown.DecimalPlaces = 2;
-            this.asymptomaticUpDown.Increment = new decimal(new int[] {
-            1,
-            0,
-            0,
-            131072});
-            this.asymptomaticUpDown.Location = new System.Drawing.Point(210, 137);
+            this.asymptomaticUpDown.Location = new System.Drawing.Point(216, 134);
             this.asymptomaticUpDown.Name = "asymptomaticUpDown";
             this.asymptomaticUpDown.Size = new System.Drawing.Size(82, 27);
             this.asymptomaticUpDown.TabIndex = 16;
@@ -264,7 +263,7 @@ namespace Simulation
             1,
             0,
             0,
-            131072});
+            0});
             this.asymptomaticUpDown.ValueChanged += new System.EventHandler(this.asymptomaticUpDown_ValueChanged);
             // 
             // label9

@@ -47,21 +47,11 @@ namespace Simulation
         Route r1, r0; //route point
 
         int ticks = 0;
-        int infectionPercentage = 10;
-        decimal asymp = 0.01M;
-        int maskUptake = 50;
-        int vaccineUptake = 50;
-        int distanceUptake = 70;
+        int infectionPercentage, maskUptake, vaccineUptake, distanceUptake, prevI;
         int day = 4000; //ticks in a day
-        int days = 2; // length of infection
-        int latency = 0;
-        int immune = 4; //length of removed status
-        int prevI = 1;
-        int pandemic = 0;
-        int numInfected = 1;
-        int restarted = 0;
+        int days, asymp, latency, immune;
+        int pandemic = 0, numInfected = 1, restarted = 0;
         bool lockdown = false;
-        bool paused = true;
 
 
         List<Building> houses = new List<Building> {};
@@ -290,6 +280,18 @@ namespace Simulation
             assignNeighbours();
             generateRoute();
 
+            // variable initialization
+            infectionPercentage = (int)infectionUpDown.Value;
+            maskUptake = (int)maskUpDown.Value;
+            vaccineUptake = (int)vaccineUpDown.Value;
+            distanceUptake = (int)distanceUpDown.Value;
+            days = (int)daysUpDown.Value; // length of being infectious and having symptoms
+            asymp = (int)asymptomaticUpDown.Value; // length of being infectious prior to having symptoms
+            latency = (int)latencyUpDown.Value; //length of being infected prior to being infectious
+            immune = (int)ImmunityUpDown.Value; //length of removed status
+            prevI = (int)InfectedUpDown.Value; //number of starting infected people, gets changed later to previous infected count
+
+
             //draw the map
             Render();
         }
@@ -316,7 +318,7 @@ namespace Simulation
 
         private void asymptomaticUpDown_ValueChanged(object sender, EventArgs e)
         {
-            asymp = asymptomaticUpDown.Value; 
+            asymp = (int)asymptomaticUpDown.Value; 
         }
 
         private void vaccineUpDown_ValueChanged(object sender, EventArgs e)
@@ -623,17 +625,11 @@ namespace Simulation
                 Person i = people[j];
 
                 // become asymptomatic or show symptoms
-                if(i.status == "Pink" && i.infected >= day * latency)
-                {
-                    //check if asymptomatic
-                    Random rnd = new Random();
-                    int prob = rnd.Next(0, 10000);
-                    int inf = (int)(asymp * 100);
-                    if (prob <= inf)
-                        i.status = "Violet";
-                    else
-                        i.status = "Red";
-                }
+                if (i.status == "Pink" && i.infected >= day * latency)
+                    i.status = "Violet";
+
+                if (i.status == "Violet" && i.infected >= day * (latency + asymp))
+                    i.status = "Red";
 
                 // end of infectious period, become removed
                 if (i.infected == day * (days+latency))
@@ -643,7 +639,7 @@ namespace Simulation
                     i.infected++;
 
                 // end of immunity period, become susceptible
-                if(i.status == "Gray" && i.infected == day * (days+latency+immune))
+                if(i.status == "Gray" && i.infected == day * (days+latency+asymp+immune))
                 {
                     i.status = "Blue";
                     i.infected = 0;

@@ -1,8 +1,8 @@
 # Pandemic_Simulation
 
-Number of Houses = TBD
-Number of Shops = TBD
-Number of People = TBD
+Number of Houses = 222
+Number of Shops = 12
+Number of People = small - 444, medium - 888, large - 1332
 
 People living in a house = 4
 Max people in shop = unlimited normally, max TBD during lockdown

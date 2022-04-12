@@ -28,6 +28,7 @@ namespace Simulation
             public bool distance; //is the person trying to keep a distance from others
             public bool vaccine; //is the person vaccinated
             public int wait;
+            public int essential; //-1 for not essential worker, or other number for shop index
         };
 
         struct Building
@@ -91,6 +92,7 @@ namespace Simulation
             p1.distance = false;
             p1.vaccine = false;
             p1.wait = 0;
+            p1.essential = -1;
             people.Add(p1);
             //person 2
             p2.x = x + 10;
@@ -105,6 +107,7 @@ namespace Simulation
             p2.distance = false;
             p2.vaccine = false;
             p2.wait = 0;
+            p2.essential = -1;
             people.Add(p2);
             if(size > 0)
             {
@@ -121,6 +124,7 @@ namespace Simulation
                 p3.distance = false;
                 p3.vaccine = false;
                 p3.wait = 0;
+                p3.essential = -1;
                 people.Add(p3);
                 //person 4
                 p4.x = x + 10;
@@ -135,6 +139,7 @@ namespace Simulation
                 p4.distance = false;
                 p4.vaccine = false;
                 p4.wait = 0;
+                p4.essential = -1;
                 people.Add(p4);
             }
             if(size == 2)
@@ -152,6 +157,7 @@ namespace Simulation
                 p5.distance = false;
                 p5.vaccine = false;
                 p5.wait = 0;
+                p5.essential = -1;
                 people.Add(p5);
                 //person 6
                 p6.x = x + 5;
@@ -166,6 +172,7 @@ namespace Simulation
                 p6.distance = false;
                 p6.vaccine = false;
                 p6.wait = 0;
+                p6.essential = -1;
                 people.Add(p6);
             }
             
@@ -521,7 +528,7 @@ namespace Simulation
                 assignNeighbours();
                 generateRoute();
 
-
+                // generate starting infected agents
                 for (int i = 0; i < numInfected; i++)
                 {
                     Random gen = new Random();
@@ -531,6 +538,31 @@ namespace Simulation
                     people[numgen] = q;
                 }
                 restarted = 1;
+
+                //generate essential workers - each shop gets a number of agents assigned to it
+                for(int i = 0; i < shops.Count; i++)
+                {
+                    Random essrnd = new Random();
+                    int count = 0;
+                    int essentials = 0;
+                    if (size == 0)
+                        essentials = 5; //small population - 5 people per shop
+                    else if (size == 1)
+                        essentials = 10; //medium population - 10 people per shop
+                    else
+                        essentials = 15; //large population - 15 people per shop
+
+                    while(count < essentials)
+                    {
+                        int essnum = essrnd.Next(0, people.Count);
+                        if(people[essnum].essential == -1)
+                        {
+                            Person e1 = people[essnum];
+                            e1.essential = i;
+                            count++;
+                        }
+                    }
+                }
 
                 // graph generation
                 d0.type = "Susceptible";

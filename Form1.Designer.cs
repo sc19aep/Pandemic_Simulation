@@ -81,7 +81,7 @@ namespace Simulation
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(7, 137);
+            this.label8.Location = new System.Drawing.Point(6, 103);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(210, 20);
             this.label8.TabIndex = 15;
@@ -128,7 +128,7 @@ namespace Simulation
             // 
             // daysUpDown
             // 
-            this.daysUpDown.Location = new System.Drawing.Point(213, 101);
+            this.daysUpDown.Location = new System.Drawing.Point(216, 132);
             this.daysUpDown.Maximum = new decimal(new int[] {
             30,
             0,
@@ -152,7 +152,7 @@ namespace Simulation
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(7, 106);
+            this.label5.Location = new System.Drawing.Point(5, 132);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(202, 20);
             this.label5.TabIndex = 10;
@@ -238,9 +238,10 @@ namespace Simulation
             // 
             // pictureBox1
             // 
+            this.pictureBox1.BackColor = System.Drawing.SystemColors.ControlLight;
             this.pictureBox1.Location = new System.Drawing.Point(306, 33);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(595, 420);
+            this.pictureBox1.Size = new System.Drawing.Size(583, 420);
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
             // 
@@ -261,9 +262,9 @@ namespace Simulation
             // 
             // asymptomaticUpDown
             // 
-            this.asymptomaticUpDown.Location = new System.Drawing.Point(216, 134);
+            this.asymptomaticUpDown.Location = new System.Drawing.Point(223, 101);
             this.asymptomaticUpDown.Name = "asymptomaticUpDown";
-            this.asymptomaticUpDown.Size = new System.Drawing.Size(82, 27);
+            this.asymptomaticUpDown.Size = new System.Drawing.Size(65, 27);
             this.asymptomaticUpDown.TabIndex = 16;
             this.asymptomaticUpDown.Value = new decimal(new int[] {
             1,
@@ -466,9 +467,10 @@ namespace Simulation
             // 
             // cartesianChart1
             // 
-            this.cartesianChart1.Location = new System.Drawing.Point(907, 33);
+            this.cartesianChart1.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.cartesianChart1.Location = new System.Drawing.Point(895, 71);
             this.cartesianChart1.Name = "cartesianChart1";
-            this.cartesianChart1.Size = new System.Drawing.Size(571, 345);
+            this.cartesianChart1.Size = new System.Drawing.Size(584, 345);
             this.cartesianChart1.TabIndex = 31;
             this.cartesianChart1.Text = "cartesianChart1";
             // 

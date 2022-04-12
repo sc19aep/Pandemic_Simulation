@@ -361,16 +361,17 @@ namespace Simulation
             cartesianChart1.AxisX.Add(new LiveCharts.Wpf.Axis
             {
                 Title = "Days",
-                LabelFormatter = value => value.ToString("days")
+                LabelFormatter = day => day.ToString()
             }) ;
             cartesianChart1.AxisY.Add(new LiveCharts.Wpf.Axis
             {
                 Title = "People",
-                LabelFormatter = value => value.ToString("count")
-            });
+                LabelFormatter = value => value.ToString()
+            }) ;
             cartesianChart1.LegendLocation = LiveCharts.LegendLocation.Right;
             
         }
+
 
         private void numericUpDown1_ValueChanged(object sender, EventArgs e)
         {

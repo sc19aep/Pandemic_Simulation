@@ -1,4 +1,6 @@
-﻿using System;
+﻿using LiveCharts;
+using LiveCharts.Wpf;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -41,12 +43,20 @@ namespace Simulation
             public List<Route> neighbours;
         };
 
+        struct Data
+        {
+            public string type; //susceptible = 0, infected = 1; removed = 2
+            public int count; //number of people in group
+            public float day; //day when data point was submitted
+        }
 
+        Data d0, d1, d2;
         Person p1, p2, p3, p4, p5, p6;
         Building s1, h1; //shop 1 and house 1
         Route r1, r0; //route point
 
-        int ticks = 0;
+        int ticks = 0, N=1;
+        float daynum = 0.0F;
         int infectionPercentage, maskUptake, vaccineUptake, distanceUptake, prevI, size;
         int day = 4000; //ticks in a day
         int days, asymp, latency, immune;
@@ -58,6 +68,7 @@ namespace Simulation
         List<Building> shops = new List<Building> {};
         List<Person> people = new List<Person> {};
         List<Route> points = new List<Route> {};
+        List<Data> chart = new List<Data> {};
 
         
 
@@ -301,6 +312,32 @@ namespace Simulation
             }
         }
 
+        private void generateChart()
+        {
+            // initialising data
+            cartesianChart1.Series.Clear();
+            SeriesCollection series = new SeriesCollection();
+            var types = (from o in chart select new { type = o.type }).Distinct();
+            
+            foreach(var type in types)
+            {
+                List<double> values = new List<double>();
+                for(float day = 0.0F; day <= daynum; day+=0.2F)
+                {
+                    double value = 0;
+                    var data = from o in chart
+                               where o.type.Equals(type.type) && o.day.Equals(day)
+                               orderby o.day ascending
+                               select new { o.count, o.day };
+                    if (data.SingleOrDefault() != null)
+                        value = data.SingleOrDefault().count;
+                    values.Add(value);
+                }
+                series.Add(new LineSeries() { Title = type.type, Values = new ChartValues<double>(values) });
+            }
+            cartesianChart1.Series = series;
+        }
+
         public Form1()
         {
             InitializeComponent();
@@ -320,7 +357,24 @@ namespace Simulation
             latency = (int)latencyUpDown.Value; //length of being infected prior to being infectious
             immune = (int)ImmunityUpDown.Value; //length of removed status
             prevI = (int)InfectedUpDown.Value; //number of starting infected people, gets changed later to previous infected count
+
+            // graph initialization
+            cartesianChart1.AxisX.Add(new LiveCharts.Wpf.Axis
+            {
+                Title = "Days",
+                LabelFormatter = day => (day/5).ToString(),
+                MinValue = 0.0F
+            }) ;
+            cartesianChart1.AxisY.Add(new LiveCharts.Wpf.Axis
+            {
+                Title = "People",
+                LabelFormatter = value => value.ToString(),
+                MinValue = 0
+            }) ;
+            cartesianChart1.LegendLocation = LiveCharts.LegendLocation.Right;
+            
         }
+
 
         private void numericUpDown1_ValueChanged(object sender, EventArgs e)
         {
@@ -410,11 +464,13 @@ namespace Simulation
             pandemic = 0;
             lockdown = false;
             restarted = 0;
+            daynum = 0;
 
             houses.Clear();
             shops.Clear();
             people.Clear();
             points.Clear();
+            chart.Clear();
 
 
             //draw the map
@@ -475,6 +531,24 @@ namespace Simulation
                     people[numgen] = q;
                 }
                 restarted = 1;
+
+                // graph generation
+                d0.type = "Susceptible";
+                d0.count = people.Count() - (int)InfectedUpDown.Value;
+                d0.day = daynum;
+                chart.Add(d0);
+
+                d1.type = "Infected";
+                d1.count = (int)InfectedUpDown.Value;
+                d1.day = daynum;
+                chart.Add(d1);
+
+                d2.type = "Removed";
+                d2.count = 0;
+                d2.day = daynum;
+                chart.Add(d2);
+
+                generateChart();
 
                 //draw
                 Render();
@@ -657,6 +731,9 @@ namespace Simulation
 
                 if (i.status == "Gray" || i.status == "Pink")
                     i.infected++;
+
+                if (i.status == "Pink")
+                    infected++;
 
                 // end of immunity period, become susceptible
                 if(i.status == "Gray" && i.infected == day * (days+latency+asymp+immune))
@@ -895,10 +972,34 @@ namespace Simulation
             if (ticks == day)
             {
                 ticks = 0;
+                N = 1;
                 generateRoute();
                 double valueR = infected / (prevI * ((double)susceptible/people.Count));
                 prevI = infected;
-                label2.Text = valueR.ToString("#.###");
+                label2.Text = valueR.ToString("#.###"); 
+            }
+            
+            if(ticks == day/5 * N)
+            {
+                daynum += 0.2F;
+                N++;
+
+                d0.type = "Susceptible";
+                d0.count = susceptible;
+                d0.day = daynum;
+                chart.Add(d0);
+
+                d1.type = "Infected";
+                d1.count = infected;
+                d1.day = daynum;
+                chart.Add(d1);
+
+                d2.type = "Removed";
+                d2.count = people.Count - susceptible - infected;
+                d2.day = daynum;
+                chart.Add(d2);
+
+                generateChart();
             }
         }
     }

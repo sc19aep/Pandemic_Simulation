@@ -18,7 +18,7 @@ namespace Simulation
         {
             public int x; //current x value
             public int y; //current y value
-            public string status; //susceptible(blue), infected(red), removed(grey)
+            public string status; //susceptible(blue), infected(red), removed(orange)
             public Building house; //the house the person returns to at the end of the day
             public List<Building> tasks;
             public Route current; //current point the person is on or heading to
@@ -760,16 +760,16 @@ namespace Simulation
 
                 // end of infectious period, become removed
                 if (i.infected == day * (days+latency))
-                    i.status = "Gray";
+                    i.status = "Orange";
 
-                if (i.status == "Gray" || i.status == "Pink")
+                if (i.status == "Orange" || i.status == "Pink")
                     i.infected++;
 
                 if (i.status == "Pink")
                     infected++;
 
                 // end of immunity period, become susceptible
-                if(i.status == "Gray" && i.infected == day * (days+latency+asymp+immune))
+                if(i.status == "Orange" && i.infected == day * (days+latency+asymp+immune))
                 {
                     i.status = "Blue";
                     i.infected = 0;

@@ -47,7 +47,7 @@ namespace Simulation
         {
             public string type; //susceptible = 0, infected = 1; removed = 2
             public int count; //number of people in group
-            public int day;
+            public float day; //day when data point was submitted
         }
 
         Data d0, d1, d2;
@@ -55,7 +55,8 @@ namespace Simulation
         Building s1, h1; //shop 1 and house 1
         Route r1, r0; //route point
 
-        int ticks = 0, daynum = 0;
+        int ticks = 0, N=1;
+        float daynum = 0.0F;
         int infectionPercentage, maskUptake, vaccineUptake, distanceUptake, prevI, size;
         int day = 4000; //ticks in a day
         int days, asymp, latency, immune;
@@ -321,7 +322,7 @@ namespace Simulation
             foreach(var type in types)
             {
                 List<double> values = new List<double>();
-                for(int day = 0; day <= daynum; day++)
+                for(float day = 0.0F; day <= daynum; day+=0.2F)
                 {
                     double value = 0;
                     var data = from o in chart
@@ -361,12 +362,14 @@ namespace Simulation
             cartesianChart1.AxisX.Add(new LiveCharts.Wpf.Axis
             {
                 Title = "Days",
-                LabelFormatter = day => day.ToString()
+                LabelFormatter = day => (day/5).ToString(),
+                MinValue = 0.0F
             }) ;
             cartesianChart1.AxisY.Add(new LiveCharts.Wpf.Axis
             {
                 Title = "People",
-                LabelFormatter = value => value.ToString()
+                LabelFormatter = value => value.ToString(),
+                MinValue = 0
             }) ;
             cartesianChart1.LegendLocation = LiveCharts.LegendLocation.Right;
             
@@ -532,17 +535,17 @@ namespace Simulation
                 // graph generation
                 d0.type = "Susceptible";
                 d0.count = people.Count() - (int)InfectedUpDown.Value;
-                d0.day = 0;
+                d0.day = daynum;
                 chart.Add(d0);
 
                 d1.type = "Infected";
                 d1.count = (int)InfectedUpDown.Value;
-                d1.day = 0;
+                d1.day = daynum;
                 chart.Add(d1);
 
                 d2.type = "Removed";
                 d2.count = 0;
-                d2.day = 0;
+                d2.day = daynum;
                 chart.Add(d2);
 
                 generateChart();
@@ -968,13 +971,18 @@ namespace Simulation
 
             if (ticks == day)
             {
-                daynum++;
                 ticks = 0;
+                N = 1;
                 generateRoute();
                 double valueR = infected / (prevI * ((double)susceptible/people.Count));
                 prevI = infected;
-                label2.Text = valueR.ToString("#.###");
-
+                label2.Text = valueR.ToString("#.###"); 
+            }
+            
+            if(ticks == day/5 * N)
+            {
+                daynum += 0.2F;
+                N++;
 
                 d0.type = "Susceptible";
                 d0.count = susceptible;

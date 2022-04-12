@@ -559,6 +559,7 @@ namespace Simulation
                         {
                             Person e1 = people[essnum];
                             e1.essential = i;
+                            people[essnum] = e1;
                             count++;
                         }
                     }

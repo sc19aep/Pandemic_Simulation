@@ -5,7 +5,7 @@ Number of Shops = 12
 Number of People = small - 444, medium - 888, large - 1332
 
 People living in a house = 4
-Max people in shop = unlimited normally, max TBD during lockdown
+Max people in shop = unlimited normally, max TBD during pandemic lockdown
 
 To start the simulation, must press the "Simulate" button, which starts the timer and therefore the simulation. To pause the simulation, must press the "Stop" button, which pauses the timer and therefore the simulation.  
 
@@ -16,3 +16,5 @@ The "End Lockdown" button means people will start going to stores the regular am
 The "Restart" button restarts the simulation letting the user change all settings and start again from the begining.
 
 Shopping: more than 0 - in shop, exactly zero - outdoors, less than zero - in house
+
+Essential workers equal a bit less than 33% percent of the population

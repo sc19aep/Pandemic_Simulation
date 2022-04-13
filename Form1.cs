@@ -61,8 +61,7 @@ namespace Simulation
         int infectionPercentage, maskUptake, vaccineUptake, distanceUptake, prevI, size;
         int day = 4000; //ticks in a day
         int days, asymp, latency, immune;
-        int pandemic = 0, numInfected = 1, restarted = 0;
-        bool lockdown = false;
+        int pandemic = 0, numInfected = 1, restarted = 0, lockdown = 0;
 
 
         List<Building> houses = new List<Building> {};
@@ -434,7 +433,7 @@ namespace Simulation
             //start lockdown
             Lockdown.Enabled = false;
             Freedom.Enabled = true;
-            lockdown = true;
+            lockdown = 1;
         }
 
         private void Freedom_Click(object sender, EventArgs e)
@@ -442,7 +441,7 @@ namespace Simulation
             //end lockdown
             Freedom.Enabled = false;
             Lockdown.Enabled = true;
-            lockdown = false;
+            lockdown = 0;
             
         }
 
@@ -469,7 +468,7 @@ namespace Simulation
             medium.Enabled = true;
             large.Enabled = true;
             pandemic = 0;
-            lockdown = false;
+            lockdown = 0;
             restarted = 0;
             daynum = 0;
 
@@ -728,6 +727,22 @@ namespace Simulation
             }
         }
 
+        private void enableLockdown()
+        {
+            //only enable once
+            lockdown = 2;
+
+            // all tasks removed, everyone goes home
+            for(int i = 0; i < people.Count; i++)
+            {
+                Person j = people[i];
+                j.tasks.Clear();
+                j.shopping = 0;
+                j.current = r0;
+                people[i] = j;
+            }
+        }
+
 
         private void timer1_Tick(object sender, EventArgs e)
         {
@@ -737,6 +752,9 @@ namespace Simulation
 
             if(pandemic == 1)
                 enablePandemic();
+
+            if (lockdown == 1)
+                enableLockdown();
 
             //find nearest route point
             //follow neighbour route points to the location

@@ -30,6 +30,7 @@ namespace Simulation
             public bool vaccine; //is the person vaccinated
             public int wait;
             public int essential; //-1 for not essential worker, or other number for shop index
+            public int group; // how many days they wait before their first shop visit during lockdown
         };
 
         struct Building
@@ -59,10 +60,10 @@ namespace Simulation
 
         int ticks = 0, N=1;
         float daynum = 0.0F;
-        int infectionPercentage, maskUptake, vaccineUptake, distanceUptake, prevI, size;
-        int day = 2400; //ticks in a day
+        int infectionPercentage, maskUptake, vaccineUptake, distanceUptake, prevI, size, frequency;
+        int day = 3000; //ticks in a day
         int days, asymp, latency, immune;
-        int pandemic = 0, numInfected = 1, restarted = 0, lockdown = 0;
+        int pandemic = 0, numInfected = 1, restarted = 0, lockdown = 0, lockDays = 0;
 
 
         List<Building> houses = new List<Building> {};
@@ -93,6 +94,7 @@ namespace Simulation
             p1.vaccine = false;
             p1.wait = 0;
             p1.essential = -1;
+            p1.group = 0;
             people.Add(p1);
             //person 2
             p2.x = x + 10;
@@ -108,6 +110,7 @@ namespace Simulation
             p2.vaccine = false;
             p2.wait = 0;
             p2.essential = -1;
+            p2.group = 0;
             people.Add(p2);
             
             if(size > 0)
@@ -126,6 +129,7 @@ namespace Simulation
                 p3.vaccine = false;
                 p3.wait = 0;
                 p3.essential = -1;
+                p3.group = 0;
                 people.Add(p3);
                 //person 4
                 p4.x = x + 10;
@@ -141,6 +145,7 @@ namespace Simulation
                 p4.vaccine = false;
                 p4.wait = 0;
                 p4.essential = -1;
+                p4.group = 0;
                 people.Add(p4);
             }
             if(size == 2)
@@ -159,6 +164,7 @@ namespace Simulation
                 p5.vaccine = false;
                 p5.wait = 0;
                 p5.essential = -1;
+                p5.group = 0;
                 people.Add(p5);
                 //person 6
                 p6.x = x + 5;
@@ -174,6 +180,7 @@ namespace Simulation
                 p6.vaccine = false;
                 p6.wait = 0;
                 p6.essential = -1;
+                p6.group = 0;
                 people.Add(p6);
             }
             
@@ -224,37 +231,53 @@ namespace Simulation
         private void generateRoute()
         {
             Random rnd = new Random();
+            if (lockdown == 2)
+                lockDays++;
 
             for (int i=0; i<people.Count(); i++)
             {
                 Person p = people[i];
 
-                if(pandemic > 0)
+                p.current = r0;
+                p.shopping = 0;
+
+                if (lockdown == 2)
+                {
+                    if (p.essential != -1)
+                    {
+                        //essential workers only go to their work place
+                        p.tasks.Add(shops[p.essential]);
+                        people[i] = p;
+                    }
+                    else if (p.group == lockDays % frequency)
+                    {
+                        //if it is the day when the agent should go to work, assign one location
+                        int num = rnd.Next(0, shops.Count());
+                        p.tasks.Add(shops[num]);
+                    }
+                    else
+                        continue;
+                }
+                else
+                {
+                    for (int j = 0; j < 3; j++)
+                    {
+                        int num = rnd.Next(0, shops.Count());
+                        p.tasks.Add(shops[num]);
+                    }
+                }
+
+                if (lockdown == 2 && p.essential == -1)
+                {
+                    int wait = rnd.Next(0, (int)day / 2);
+                    p.wait = wait;
+                }
+                else if (pandemic > 0)
                 {
                     int wait = rnd.Next(0, (int)day / 6);
                     p.wait = wait;
                 }
 
-                p.current = r0;
-                p.shopping = 0;
-                int count = 3;
-                if (lockdown == 2)
-                {
-                    count = 1;
-                    if(p.essential != -1)
-                    {
-                        //essential workers only go to their work place
-                        p.tasks.Add(shops[p.essential]);
-                        people[i] = p;
-                        continue;
-                    }
-                }
-
-                for(int j = 0; j<count; j++)
-                {
-                    int num = rnd.Next(0, shops.Count());
-                    p.tasks.Add(shops[num]);
-                }
                 people[i] = p;
             }
         }
@@ -379,6 +402,7 @@ namespace Simulation
             latency = (int)latencyUpDown.Value; //length of being infected prior to being infectious
             immune = (int)ImmunityUpDown.Value; //length of removed status
             prevI = (int)InfectedUpDown.Value; //number of starting infected people, gets changed later to previous infected count
+            frequency = (int)shopUpDown.Value; // how many days between shops during lockdown
 
             // graph initialization
             cartesianChart1.AxisX.Add(new LiveCharts.Wpf.Axis
@@ -454,13 +478,17 @@ namespace Simulation
             //only enable once
             lockdown = 2;
 
+            Random lockRnd = new Random();
+
             // all tasks removed, everyone goes home
-            for(int i = 0; i < people.Count; i++)
+            for (int i = 0; i < people.Count; i++)
             {
+                int group = lockRnd.Next(0, frequency);
                 Person j = people[i];
                 j.tasks.Clear();
                 j.shopping = 0;
                 j.current = r0;
+                j.group = group;
                 people[i] = j;
             }
         }
@@ -986,6 +1014,7 @@ namespace Simulation
             maskUpDown.Enabled = true;
             vaccineUpDown.Enabled = true;
             distanceUpDown.Enabled = true;
+            shopUpDown.Enabled = true;
             Pandemic.Enabled = true;
             Start.Enabled = true;
             Stop.Enabled = false;
@@ -998,6 +1027,7 @@ namespace Simulation
             lockdown = 0;
             restarted = 0;
             daynum = 0;
+            lockDays = 0;
 
             houses.Clear();
             shops.Clear();
@@ -1019,6 +1049,7 @@ namespace Simulation
             Pandemic.Enabled = false;
             Lockdown.Enabled = true;
             pandemic = 1;
+            enablePandemic();
         }
 
         private void Lockdown_Click(object sender, EventArgs e)
@@ -1026,7 +1057,9 @@ namespace Simulation
             //start lockdown
             Lockdown.Enabled = false;
             Freedom.Enabled = true;
+            shopUpDown.Enabled = false;
             lockdown = 1;
+            enableLockdown();
         }
 
         private void Freedom_Click(object sender, EventArgs e)
@@ -1034,6 +1067,7 @@ namespace Simulation
             //end lockdown
             Freedom.Enabled = false;
             Lockdown.Enabled = true;
+            shopUpDown.Enabled = true;
             lockdown = 0;
         }
 
@@ -1082,6 +1116,11 @@ namespace Simulation
         private void InfectedUpDown_ValueChanged(object sender, EventArgs e)
         {
             numInfected = (int)InfectedUpDown.Value;
+        }
+
+        private void shopUpDown_ValueChanged(object sender, EventArgs e)
+        {
+            frequency = (int)shopUpDown.Value;
         }
     }
 }

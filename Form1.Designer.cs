@@ -65,6 +65,8 @@ namespace Simulation
             this.large = new System.Windows.Forms.RadioButton();
             this.medium = new System.Windows.Forms.RadioButton();
             this.cartesianChart1 = new LiveCharts.WinForms.CartesianChart();
+            this.label14 = new System.Windows.Forms.Label();
+            this.shopUpDown = new System.Windows.Forms.NumericUpDown();
             ((System.ComponentModel.ISupportInitialize)(this.latencyUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.daysUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.maskUpDown)).BeginInit();
@@ -76,6 +78,7 @@ namespace Simulation
             ((System.ComponentModel.ISupportInitialize)(this.ImmunityUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.InfectedUpDown)).BeginInit();
             this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.shopUpDown)).BeginInit();
             this.SuspendLayout();
             // 
             // label8
@@ -474,12 +477,46 @@ namespace Simulation
             this.cartesianChart1.TabIndex = 31;
             this.cartesianChart1.Text = "cartesianChart1";
             // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(5, 354);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(215, 20);
+            this.label14.TabIndex = 32;
+            this.label14.Text = "- Shop every ? days (lockdown)";
+            // 
+            // shopUpDown
+            // 
+            this.shopUpDown.Location = new System.Drawing.Point(226, 352);
+            this.shopUpDown.Maximum = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            this.shopUpDown.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.shopUpDown.Name = "shopUpDown";
+            this.shopUpDown.Size = new System.Drawing.Size(78, 27);
+            this.shopUpDown.TabIndex = 33;
+            this.shopUpDown.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.shopUpDown.ValueChanged += new System.EventHandler(this.shopUpDown_ValueChanged);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
             this.ClientSize = new System.Drawing.Size(1480, 510);
+            this.Controls.Add(this.shopUpDown);
+            this.Controls.Add(this.label14);
             this.Controls.Add(this.cartesianChart1);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.InfectedUpDown);
@@ -525,6 +562,7 @@ namespace Simulation
             ((System.ComponentModel.ISupportInitialize)(this.InfectedUpDown)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.shopUpDown)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -567,6 +605,8 @@ namespace Simulation
         private System.Windows.Forms.RadioButton medium;
         private System.Windows.Forms.RadioButton small;
         private LiveCharts.WinForms.CartesianChart cartesianChart1;
+        private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.NumericUpDown shopUpDown;
     }
 }
 

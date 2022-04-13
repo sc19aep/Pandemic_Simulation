@@ -961,7 +961,7 @@ namespace Simulation
                         {
                             Person e1 = people[essnum];
                             e1.essential = i;
-                            e1.status = "Yellow";
+                            //e1.status = "Yellow";
                             people[essnum] = e1;
                             count++;
                         }

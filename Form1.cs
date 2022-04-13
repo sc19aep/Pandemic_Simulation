@@ -14,6 +14,7 @@ namespace Simulation
 {
     public partial class Form1 : Form
     {
+        //all the structs and the base global initializations
         struct Person
         {
             public int x; //current x value
@@ -59,7 +60,7 @@ namespace Simulation
         int ticks = 0, N=1;
         float daynum = 0.0F;
         int infectionPercentage, maskUptake, vaccineUptake, distanceUptake, prevI, size;
-        int day = 4000; //ticks in a day
+        int day = 2400; //ticks in a day
         int days, asymp, latency, immune;
         int pandemic = 0, numInfected = 1, restarted = 0, lockdown = 0;
 
@@ -70,14 +71,14 @@ namespace Simulation
         List<Route> points = new List<Route> {};
         List<Data> chart = new List<Data> {};
 
-        
-
+        // generation functions
         private void addHouse(int x, int y)
         {
             //house
             h1.x = x;
             h1.y = y;
             houses.Add(h1);
+
             //person 1
             p1.x = x;
             p1.y = y;
@@ -108,6 +109,7 @@ namespace Simulation
             p2.wait = 0;
             p2.essential = -1;
             people.Add(p2);
+            
             if(size > 0)
             {
                 //person 3
@@ -235,7 +237,20 @@ namespace Simulation
 
                 p.current = r0;
                 p.shopping = 0;
-                for(int j = 0; j<3; j++)
+                int count = 3;
+                if (lockdown == 2)
+                {
+                    count = 1;
+                    if(p.essential != -1)
+                    {
+                        //essential workers only go to their work place
+                        p.tasks.Add(shops[p.essential]);
+                        people[i] = p;
+                        continue;
+                    }
+                }
+
+                for(int j = 0; j<count; j++)
                 {
                     int num = rnd.Next(0, shops.Count());
                     p.tasks.Add(shops[num]);
@@ -344,6 +359,7 @@ namespace Simulation
             cartesianChart1.Series = series;
         }
 
+        // form intialization
         public Form1()
         {
             InitializeComponent();
@@ -381,220 +397,7 @@ namespace Simulation
             
         }
 
-
-        private void numericUpDown1_ValueChanged(object sender, EventArgs e)
-        {
-            infectionPercentage = (int)infectionUpDown.Value;
-        }
-
-        private void numericUpDown2_ValueChanged(object sender, EventArgs e)
-        {
-            maskUptake = (int)maskUpDown.Value;
-        }
-
-        private void daysUpDown_ValueChanged(object sender, EventArgs e)
-        {
-            days = (int)daysUpDown.Value;
-        }
-
-        private void latencyUpDown_ValueChanged(object sender, EventArgs e)
-        {
-            latency = (int)latencyUpDown.Value;
-        }
-
-        private void asymptomaticUpDown_ValueChanged(object sender, EventArgs e)
-        {
-            asymp = (int)asymptomaticUpDown.Value; 
-        }
-
-        private void vaccineUpDown_ValueChanged(object sender, EventArgs e)
-        {
-            vaccineUptake = (int)vaccineUpDown.Value;
-        }
-
-        private void distanceUpDown_ValueChanged(object sender, EventArgs e)
-        {
-            distanceUptake = (int)distanceUpDown.Value;
-        }
-
-        private void ImmunityUpDown_ValueChanged(object sender, EventArgs e)
-        {
-            immune = (int)ImmunityUpDown.Value;
-        }
-
-        private void InfectedUpDown_ValueChanged(object sender, EventArgs e)
-        {
-            numInfected = (int)InfectedUpDown.Value;
-        }
-
-        private void Lockdown_Click(object sender, EventArgs e)
-        {
-
-            //start lockdown
-            Lockdown.Enabled = false;
-            Freedom.Enabled = true;
-            lockdown = 1;
-        }
-
-        private void Freedom_Click(object sender, EventArgs e)
-        {
-            //end lockdown
-            Freedom.Enabled = false;
-            Lockdown.Enabled = true;
-            lockdown = 0;
-            
-        }
-
-        private void Restart_Click(object sender, EventArgs e)
-        {
-            //restart the simulation
-            timer1.Stop();
-            ticks = 0;
-            infectionUpDown.Enabled = true;
-            daysUpDown.Enabled = true;
-            latencyUpDown.Enabled = true;
-            asymptomaticUpDown.Enabled = true;
-            ImmunityUpDown.Enabled = true;
-            InfectedUpDown.Enabled = true;
-            maskUpDown.Enabled = true;
-            vaccineUpDown.Enabled = true;
-            distanceUpDown.Enabled = true;
-            Pandemic.Enabled = true;
-            Start.Enabled = true;
-            Stop.Enabled = false;
-            Lockdown.Enabled = false;
-            Freedom.Enabled = false;
-            small.Enabled = true;
-            medium.Enabled = true;
-            large.Enabled = true;
-            pandemic = 0;
-            lockdown = 0;
-            restarted = 0;
-            daynum = 0;
-
-            houses.Clear();
-            shops.Clear();
-            people.Clear();
-            points.Clear();
-            chart.Clear();
-
-
-            //draw the map
-            Render();
-        }
-
-        private void Pandemic_Click(object sender, EventArgs e)
-        {
-            //call pandemic
-            maskUpDown.Enabled = false;
-            vaccineUpDown.Enabled = false;
-            distanceUpDown.Enabled = false;
-            Pandemic.Enabled = false;
-            Lockdown.Enabled = true;
-            pandemic = 1;
-        }
-
-
-
-        private void Start_Click(object sender, EventArgs e)
-        {
-            //start simulation
-            timer1.Start();
-            infectionUpDown.Enabled = false;
-            daysUpDown.Enabled = false;
-            latencyUpDown.Enabled = false;
-            asymptomaticUpDown.Enabled = false;
-            ImmunityUpDown.Enabled = false;
-            InfectedUpDown.Enabled = false;
-            Stop.Enabled = true;
-            Start.Enabled = false;
-            Lockdown.Enabled = true;
-            small.Enabled = false;
-            medium.Enabled = false;
-            large.Enabled = false;
-
-            if (restarted == 0)
-            {
-                if (small.Checked)
-                    size = 0;
-                else if (medium.Checked)
-                    size = 1;
-                else
-                    size = 2;
-
-                //houses, shops and people
-                generateMap();
-                assignNeighbours();
-                generateRoute();
-
-                // generate starting infected agents
-                for (int i = 0; i < numInfected; i++)
-                {
-                    Random gen = new Random();
-                    int numgen = gen.Next(0, people.Count());
-                    Person q = people[numgen];
-                    q.status = "Violet";
-                    people[numgen] = q;
-                }
-                restarted = 1;
-
-                //generate essential workers - each shop gets a number of agents assigned to it
-                for(int i = 0; i < shops.Count; i++)
-                {
-                    Random essrnd = new Random();
-                    int count = 0;
-                    int essentials = 0;
-                    if (size == 0)
-                        essentials = 5; //small population - 5 people per shop
-                    else if (size == 1)
-                        essentials = 10; //medium population - 10 people per shop
-                    else
-                        essentials = 15; //large population - 15 people per shop
-
-                    while(count < essentials)
-                    {
-                        int essnum = essrnd.Next(0, people.Count);
-                        if(people[essnum].essential == -1)
-                        {
-                            Person e1 = people[essnum];
-                            e1.essential = i;
-                            people[essnum] = e1;
-                            count++;
-                        }
-                    }
-                }
-
-                // graph generation
-                d0.type = "Susceptible";
-                d0.count = people.Count() - (int)InfectedUpDown.Value;
-                d0.day = daynum;
-                chart.Add(d0);
-
-                d1.type = "Infected";
-                d1.count = (int)InfectedUpDown.Value;
-                d1.day = daynum;
-                chart.Add(d1);
-
-                d2.type = "Removed";
-                d2.count = 0;
-                d2.day = daynum;
-                chart.Add(d2);
-
-                generateChart();
-
-                //draw
-                Render();
-            }
-
-        }
-
-        private void Stop_Click(object sender, EventArgs e)
-        {
-            //pause simulation
-            timer1.Stop();
-            Start.Enabled = true;
-            Stop.Enabled = false;
-        }
+        // helpful functions using in other functions
 
         private int FindClosest(float x, float y, List<Route> route)
         {
@@ -615,6 +418,54 @@ namespace Simulation
             }
             return index;
         }
+
+        private void enablePandemic()
+        {
+            //only enable once
+            pandemic = 2;
+
+            // people start wearing masks
+            // people start keeping a distance
+            // portion of the population is vaccinated - immune forever
+            Random maskRnd = new Random();
+            Random distRnd = new Random();
+            Random vacRnd = new Random();
+
+            for(int i = 0; i < people.Count(); i++)
+            {
+                Person p = people[i];
+                int mask = maskRnd.Next(0, 100);
+                int dist = distRnd.Next(0, 100);
+                int vacc = vacRnd.Next(0, 100);
+
+                if (mask <= maskUptake)
+                    p.mask = true;
+                if (dist <= distanceUptake)
+                    p.distance = true;
+                if (vacc <= vaccineUptake)
+                    p.vaccine = true;
+
+                people[i] = p;
+            }
+        }
+
+        private void enableLockdown()
+        {
+            //only enable once
+            lockdown = 2;
+
+            // all tasks removed, everyone goes home
+            for(int i = 0; i < people.Count; i++)
+            {
+                Person j = people[i];
+                j.tasks.Clear();
+                j.shopping = 0;
+                j.current = r0;
+                people[i] = j;
+            }
+        }
+
+        // main functions of the program
 
         private void spreadInfection(int i)
         {
@@ -640,7 +491,7 @@ namespace Simulation
                     //if within 3 pixel vicinity, then the transmission probability is as chosen
                     if (q.x > p.x - 3 && q.x < p.x + 3 && q.y > p.y - 3 && q.y < p.y + 3)
                     {
-                        if(pandemic == 2)
+                        if (pandemic == 2)
                         {
                             if (p.mask == false && q.mask == true)
                                 inf = inf * 0.70f;
@@ -690,59 +541,9 @@ namespace Simulation
                         people[j] = r;
                     }
 
-                } 
-            }
-
-            
-        }
-
-        private void enablePandemic()
-        {
-            //only enable once
-            pandemic = 2;
-
-            // people start wearing masks
-            // people start keeping a distance
-            // portion of the population is vaccinated - immune forever
-            Random maskRnd = new Random();
-            Random distRnd = new Random();
-            Random vacRnd = new Random();
-
-            for(int i = 0; i < people.Count(); i++)
-            {
-                Person p = people[i];
-                int mask = maskRnd.Next(0, 100);
-                int dist = distRnd.Next(0, 100);
-                int vacc = vacRnd.Next(0, 100);
-
-                if (mask <= maskUptake)
-                    p.mask = true;
-                if (dist <= distanceUptake)
-                    p.distance = true;
-                if (vacc <= vaccineUptake)
-                    p.vaccine = true;
-
-                people[i] = p;
-
+                }
             }
         }
-
-        private void enableLockdown()
-        {
-            //only enable once
-            lockdown = 2;
-
-            // all tasks removed, everyone goes home
-            for(int i = 0; i < people.Count; i++)
-            {
-                Person j = people[i];
-                j.tasks.Clear();
-                j.shopping = 0;
-                j.current = r0;
-                people[i] = j;
-            }
-        }
-
 
         private void timer1_Tick(object sender, EventArgs e)
         {
@@ -878,7 +679,22 @@ namespace Simulation
 
                         i.shopping++;
 
-                        if (i.shopping == 300)
+                        if(lockdown == 2)
+                        {
+                            if(i.essential != -1 && i.shopping == 1500)
+                            {
+                                i.tasks.RemoveAt(0);
+                                i.shopping = 0;
+                                i.current = r0;
+                            }
+                            else if(i.essential == -1 && i.shopping == 300)
+                            {
+                                i.tasks.RemoveAt(0);
+                                i.shopping = 0;
+                                i.current = r0;
+                            }
+                        }
+                        else if (i.shopping == 300)
                         {
                             i.tasks.RemoveAt(0);
                             i.shopping = 0;
@@ -1020,17 +836,7 @@ namespace Simulation
             }
             Render();
 
-            if (ticks == day)
-            {
-                ticks = 0;
-                N = 1;
-                generateRoute();
-                double valueR = infected / (prevI * ((double)susceptible/people.Count));
-                prevI = infected;
-                label2.Text = valueR.ToString("#.###"); 
-            }
-            
-            if(ticks == day/5 * N)
+            if (ticks == day / 5 * N)
             {
                 daynum += 0.2F;
                 N++;
@@ -1052,6 +858,230 @@ namespace Simulation
 
                 generateChart();
             }
+
+            if (ticks == day)
+            {
+                ticks = 0;
+                N = 1;
+                generateRoute();
+                double valueR = infected / (prevI * ((double)susceptible/people.Count));
+                prevI = infected;
+                label2.Text = valueR.ToString("#.###"); 
+            }
+        }
+
+        // all the button click functions
+        private void Start_Click(object sender, EventArgs e)
+        {
+            //start simulation
+            timer1.Start();
+            infectionUpDown.Enabled = false;
+            daysUpDown.Enabled = false;
+            latencyUpDown.Enabled = false;
+            asymptomaticUpDown.Enabled = false;
+            ImmunityUpDown.Enabled = false;
+            InfectedUpDown.Enabled = false;
+            Stop.Enabled = true;
+            Start.Enabled = false;
+            Lockdown.Enabled = true;
+            small.Enabled = false;
+            medium.Enabled = false;
+            large.Enabled = false;
+
+            if (restarted == 0)
+            {
+                if (small.Checked)
+                    size = 0;
+                else if (medium.Checked)
+                    size = 1;
+                else
+                    size = 2;
+
+                //houses, shops and people
+                generateMap();
+                assignNeighbours();
+                generateRoute();
+
+                // generate starting infected agents
+                for (int i = 0; i < numInfected; i++)
+                {
+                    Random gen = new Random();
+                    int numgen = gen.Next(0, people.Count());
+                    Person q = people[numgen];
+                    q.status = "Violet";
+                    people[numgen] = q;
+                }
+                restarted = 1;
+
+                //generate essential workers - each shop gets a number of agents assigned to it
+                for (int i = 0; i < shops.Count; i++)
+                {
+                    Random essrnd = new Random();
+                    int count = 0;
+                    int essentials = 0;
+                    if (size == 0)
+                        essentials = 5; //small population - 5 people per shop
+                    else if (size == 1)
+                        essentials = 10; //medium population - 10 people per shop
+                    else
+                        essentials = 15; //large population - 15 people per shop
+
+                    while (count < essentials)
+                    {
+                        int essnum = essrnd.Next(0, people.Count);
+                        if (people[essnum].essential == -1)
+                        {
+                            Person e1 = people[essnum];
+                            e1.essential = i;
+                            e1.status = "Yellow";
+                            people[essnum] = e1;
+                            count++;
+                        }
+                    }
+                }
+
+                // graph generation
+                d0.type = "Susceptible";
+                d0.count = people.Count() - (int)InfectedUpDown.Value;
+                d0.day = daynum;
+                chart.Add(d0);
+
+                d1.type = "Infected";
+                d1.count = (int)InfectedUpDown.Value;
+                d1.day = daynum;
+                chart.Add(d1);
+
+                d2.type = "Removed";
+                d2.count = 0;
+                d2.day = daynum;
+                chart.Add(d2);
+
+                generateChart();
+
+                //draw
+                Render();
+            }
+
+        }
+
+        private void Stop_Click(object sender, EventArgs e)
+        {
+            //pause simulation
+            timer1.Stop();
+            Start.Enabled = true;
+            Stop.Enabled = false;
+        }
+
+        private void Restart_Click(object sender, EventArgs e)
+        {
+            //restart the simulation
+            timer1.Stop();
+            ticks = 0;
+            infectionUpDown.Enabled = true;
+            daysUpDown.Enabled = true;
+            latencyUpDown.Enabled = true;
+            asymptomaticUpDown.Enabled = true;
+            ImmunityUpDown.Enabled = true;
+            InfectedUpDown.Enabled = true;
+            maskUpDown.Enabled = true;
+            vaccineUpDown.Enabled = true;
+            distanceUpDown.Enabled = true;
+            Pandemic.Enabled = true;
+            Start.Enabled = true;
+            Stop.Enabled = false;
+            Lockdown.Enabled = false;
+            Freedom.Enabled = false;
+            small.Enabled = true;
+            medium.Enabled = true;
+            large.Enabled = true;
+            pandemic = 0;
+            lockdown = 0;
+            restarted = 0;
+            daynum = 0;
+
+            houses.Clear();
+            shops.Clear();
+            people.Clear();
+            points.Clear();
+            chart.Clear();
+
+
+            //draw the map
+            Render();
+        }
+
+        private void Pandemic_Click(object sender, EventArgs e)
+        {
+            //call pandemic
+            maskUpDown.Enabled = false;
+            vaccineUpDown.Enabled = false;
+            distanceUpDown.Enabled = false;
+            Pandemic.Enabled = false;
+            Lockdown.Enabled = true;
+            pandemic = 1;
+        }
+
+        private void Lockdown_Click(object sender, EventArgs e)
+        {
+            //start lockdown
+            Lockdown.Enabled = false;
+            Freedom.Enabled = true;
+            lockdown = 1;
+        }
+
+        private void Freedom_Click(object sender, EventArgs e)
+        {
+            //end lockdown
+            Freedom.Enabled = false;
+            Lockdown.Enabled = true;
+            lockdown = 0;
+        }
+
+        // value assignements from the form to global values
+        // not much modification needed, so placed at the bottom
+        private void numericUpDown1_ValueChanged(object sender, EventArgs e)
+        {
+            infectionPercentage = (int)infectionUpDown.Value;
+        }
+
+        private void numericUpDown2_ValueChanged(object sender, EventArgs e)
+        {
+            maskUptake = (int)maskUpDown.Value;
+        }
+
+        private void daysUpDown_ValueChanged(object sender, EventArgs e)
+        {
+            days = (int)daysUpDown.Value;
+        }
+
+        private void latencyUpDown_ValueChanged(object sender, EventArgs e)
+        {
+            latency = (int)latencyUpDown.Value;
+        }
+
+        private void asymptomaticUpDown_ValueChanged(object sender, EventArgs e)
+        {
+            asymp = (int)asymptomaticUpDown.Value;
+        }
+
+        private void vaccineUpDown_ValueChanged(object sender, EventArgs e)
+        {
+            vaccineUptake = (int)vaccineUpDown.Value;
+        }
+
+        private void distanceUpDown_ValueChanged(object sender, EventArgs e)
+        {
+            distanceUptake = (int)distanceUpDown.Value;
+        }
+
+        private void ImmunityUpDown_ValueChanged(object sender, EventArgs e)
+        {
+            immune = (int)ImmunityUpDown.Value;
+        }
+
+        private void InfectedUpDown_ValueChanged(object sender, EventArgs e)
+        {
+            numInfected = (int)InfectedUpDown.Value;
         }
     }
 }

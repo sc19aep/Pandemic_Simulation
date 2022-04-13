@@ -210,7 +210,7 @@ namespace Simulation
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(56, 433);
+            this.label2.Location = new System.Drawing.Point(939, 433);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(17, 20);
             this.label2.TabIndex = 4;
@@ -219,7 +219,7 @@ namespace Simulation
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 433);
+            this.label1.Location = new System.Drawing.Point(895, 433);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(50, 20);
             this.label1.TabIndex = 3;
@@ -425,7 +425,7 @@ namespace Simulation
             this.groupBox1.Controls.Add(this.small);
             this.groupBox1.Controls.Add(this.large);
             this.groupBox1.Controls.Add(this.medium);
-            this.groupBox1.Location = new System.Drawing.Point(7, 356);
+            this.groupBox1.Location = new System.Drawing.Point(5, 404);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(285, 49);
             this.groupBox1.TabIndex = 30;

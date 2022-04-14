@@ -1028,6 +1028,7 @@ namespace Simulation
             restarted = 0;
             daynum = 0;
             lockDays = 0;
+            N = 1;
 
             houses.Clear();
             shops.Clear();

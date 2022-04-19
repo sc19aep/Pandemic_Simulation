@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -63,7 +64,9 @@ namespace Simulation
         int infectionPercentage, maskUptake, vaccineUptake, distanceUptake, prevI, size, frequency;
         int day = 3000; //ticks in a day
         int days, asymp, latency, immune;
-        int pandemic = 0, numInfected = 1, restarted = 0, lockdown = 0, lockDays = 0;
+        int pandemic = 0, numInfected = 1, restarted = 0, lockdown = 0, lockDays = 0, infections = 0;
+
+        int test = 0;
 
 
         List<Building> houses = new List<Building> {};
@@ -566,6 +569,7 @@ namespace Simulation
                     {
                         Person r = people[j];
                         r.status = "Pink";
+                        infections++;
                         people[j] = r;
                     }
 
@@ -574,6 +578,11 @@ namespace Simulation
         }
 
         private void timer1_Tick(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Tick()
         {
             ticks++;
             int infected = 0;
@@ -606,7 +615,7 @@ namespace Simulation
                     i.status = "Red";
 
                 // end of infectious period, become removed
-                if (i.infected == day * (days+latency))
+                if (i.infected == day * (days+latency+asymp))
                     i.status = "Orange";
 
                 if (i.status == "Orange" || i.status == "Pink")
@@ -896,6 +905,24 @@ namespace Simulation
                 prevI = infected;
                 label2.Text = valueR.ToString("#.###"); 
             }
+
+            if (infected == 0)
+            {
+                timer1.Stop();
+               // Console.Beep(5000, 1000);
+                label16.Text = infections.ToString("#");
+
+                //print to file - find maxInf, maxDay, totalInf, totalDay
+                int largest = chart.FindAll(t => t.type=="Infected").Max(t => t.count);
+                int infDay = (int)chart.FindAll(t => t.count == largest).First().day;
+
+
+                addToFile(largest, infDay, infections, (int)daynum);
+
+                test = 1;
+
+            }
+                
         }
 
         // all the button click functions
@@ -937,6 +964,7 @@ namespace Simulation
                     int numgen = gen.Next(0, people.Count());
                     Person q = people[numgen];
                     q.status = "Violet";
+                    q.infected = day * latency;
                     people[numgen] = q;
                 }
                 restarted = 1;
@@ -1019,7 +1047,7 @@ namespace Simulation
             Start.Enabled = true;
             Stop.Enabled = false;
             Lockdown.Enabled = false;
-            Freedom.Enabled = false;
+            Freedom.Enabled = true;
             small.Enabled = true;
             medium.Enabled = true;
             large.Enabled = true;
@@ -1028,6 +1056,7 @@ namespace Simulation
             restarted = 0;
             daynum = 0;
             lockDays = 0;
+            infections = 0;
             N = 1;
 
             houses.Clear();
@@ -1048,7 +1077,7 @@ namespace Simulation
             vaccineUpDown.Enabled = false;
             distanceUpDown.Enabled = false;
             Pandemic.Enabled = false;
-            Lockdown.Enabled = true;
+            Lockdown.Enabled = false;
             pandemic = 1;
             enablePandemic();
         }
@@ -1065,11 +1094,13 @@ namespace Simulation
 
         private void Freedom_Click(object sender, EventArgs e)
         {
+            runTests();
+
             //end lockdown
-            Freedom.Enabled = false;
-            Lockdown.Enabled = true;
-            shopUpDown.Enabled = true;
-            lockdown = 0;
+            //Freedom.Enabled = false;
+            //Lockdown.Enabled = true;
+            //shopUpDown.Enabled = true;
+            //lockdown = 0;
         }
 
         // value assignements from the form to global values
@@ -1122,6 +1153,100 @@ namespace Simulation
         private void shopUpDown_ValueChanged(object sender, EventArgs e)
         {
             frequency = (int)shopUpDown.Value;
+        }
+
+
+        private void runSimulations(int i, int mask, int distance, int vaccine, int settings)
+        {
+            for(int j = 0; j<10; j++)
+            {
+                if(settings > 0)
+                    Pandemic.PerformClick();
+                if (settings == 2)
+                    Lockdown.PerformClick();
+                Start.PerformClick();
+
+                while(test == 0)
+                {
+                    Tick();
+                }
+                
+                Restart.PerformClick();
+                test = 0;
+            } 
+        }
+
+
+        private void runTests()
+        {
+            days = 2; // length of being infectious and having symptoms
+            asymp = 2; // length of being infectious prior to having symptoms
+            latency = 1; //length of being infected prior to being infectious
+            immune = 20; //length of removed status
+            prevI = 10; //number of starting infected people, gets changed later to previous infected count
+            frequency = 4; // how many days between shops during lockdown
+
+            infectionPercentage = 1;
+            maskUptake = 0;
+            distanceUptake = 0;
+            vaccineUptake = 0;
+            pandemic = 0;
+            int numbers = 0;
+
+            for (int s = 0; s<=2; s++)
+            {
+                size = s;
+                //scenario 1 - small, infection rate 1, mask 0, distance 0, vaccine 0, no pandemic
+                size = 0; //small population
+                
+                runSimulations(numbers, 0, 0, 0, 0);
+                numbers++;
+
+                //scenario 2-65 - small, infection rate 1, mask 0-90, distance 0-90, vaccine 0-90, pandemic
+                pandemic = 1;
+                for (int mask = 0; mask < 100; mask += 30)
+                    for (int distance = 0; distance < 100; distance += 30)
+                        for (int vaccine = 0; vaccine < 100; vaccine += 30)
+                        {
+                            maskUptake = mask;
+                            distanceUptake = distance;
+                            vaccineUptake = vaccine;
+                            numbers++;
+                            runSimulations(numbers, mask, distance, vaccine, 1);
+                            lockdown = 1;
+                            runSimulations(numbers, mask, distance, vaccine, 2);
+                        }
+            }
+        }
+
+        // Creating a file
+        string myfile = @"C:\Users\gwend\source\repos\Simulation\Scenarios.txt";
+
+        public void addToFile(int maxInf, int maxDay, int totalInf, int totalDay)
+        {
+            // Checking the above file
+            if (!File.Exists(myfile))
+            {
+                // Creating the same file if it doesn't exist
+                using (StreamWriter w = File.CreateText(myfile))
+                {
+                    w.WriteLine("population " + size + ", infection rate " + infectionPercentage
+                        + ", mask " + maskUptake + ", distance " + distanceUptake + ", vaccine " + vaccineUptake
+                        + ", pandemic " + pandemic + ", lockdown " + lockdown + ", maxInf " + maxInf
+                        + ", maxDay " + maxDay + ", totalInf " + totalInf + ", totalDay " + totalDay + ";");
+                }
+            }
+            else
+            {
+                using (StreamWriter w = File.AppendText(myfile))
+                {
+                    w.WriteLine("population " + size + ", infection rate " + infectionPercentage
+                        + ", mask " + maskUptake + ", distance " + distanceUptake + ", vaccine " + vaccineUptake
+                        + ", pandemic " + pandemic + ", lockdown " + lockdown + ", maxInf " + maxInf
+                        + ", maxDay " + maxDay + ", totalInf " + totalInf + ", totalDay " + totalDay + ";");
+                }
+            }
+            
         }
     }
 }

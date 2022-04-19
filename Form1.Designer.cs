@@ -67,6 +67,8 @@ namespace Simulation
             this.cartesianChart1 = new LiveCharts.WinForms.CartesianChart();
             this.label14 = new System.Windows.Forms.Label();
             this.shopUpDown = new System.Windows.Forms.NumericUpDown();
+            this.label15 = new System.Windows.Forms.Label();
+            this.label16 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.latencyUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.daysUpDown)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.maskUpDown)).BeginInit();
@@ -473,7 +475,7 @@ namespace Simulation
             this.cartesianChart1.BackColor = System.Drawing.SystemColors.ControlLight;
             this.cartesianChart1.Location = new System.Drawing.Point(895, 71);
             this.cartesianChart1.Name = "cartesianChart1";
-            this.cartesianChart1.Size = new System.Drawing.Size(584, 345);
+            this.cartesianChart1.Size = new System.Drawing.Size(654, 345);
             this.cartesianChart1.TabIndex = 31;
             this.cartesianChart1.Text = "cartesianChart1";
             // 
@@ -509,12 +511,32 @@ namespace Simulation
             0});
             this.shopUpDown.ValueChanged += new System.EventHandler(this.shopUpDown_ValueChanged);
             // 
+            // label15
+            // 
+            this.label15.AutoSize = true;
+            this.label15.Location = new System.Drawing.Point(1020, 433);
+            this.label15.Name = "label15";
+            this.label15.Size = new System.Drawing.Size(128, 20);
+            this.label15.TabIndex = 34;
+            this.label15.Text = "Total infections = ";
+            // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Location = new System.Drawing.Point(1145, 433);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(17, 20);
+            this.label16.TabIndex = 35;
+            this.label16.Text = "0";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
-            this.ClientSize = new System.Drawing.Size(1480, 510);
+            this.ClientSize = new System.Drawing.Size(1584, 510);
+            this.Controls.Add(this.label16);
+            this.Controls.Add(this.label15);
             this.Controls.Add(this.shopUpDown);
             this.Controls.Add(this.label14);
             this.Controls.Add(this.cartesianChart1);
@@ -607,6 +629,8 @@ namespace Simulation
         private LiveCharts.WinForms.CartesianChart cartesianChart1;
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.NumericUpDown shopUpDown;
+        private System.Windows.Forms.Label label15;
+        private System.Windows.Forms.Label label16;
     }
 }
 
